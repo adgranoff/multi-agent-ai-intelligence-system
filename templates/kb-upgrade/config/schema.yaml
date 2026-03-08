@@ -1,0 +1,308 @@
+# OpenClaw KB Schema Definition
+# Reference specification for entity frontmatter and structure
+
+schema_version: "1.0.0"
+last_updated: "2026-03-07"
+
+# ============================================
+# ENTITY TYPES
+# ============================================
+entity_types:
+  - lab              # Frontier AI research labs
+  - model            # Specific AI models/systems
+  - person           # Key individuals (researchers, execs, policymakers)
+  - company          # Non-lab AI companies, infrastructure providers
+  - investor         # VC firms, sovereign funds, corporate investors
+  - regulator        # Government bodies, agencies, legislative efforts
+  - theme            # Macro trends, debates, strategic topics
+  - opportunity      # Actionable consulting opportunities
+
+# ============================================
+# BASE SCHEMA (applies to ALL entities)
+# ============================================
+base_entity:
+  required:
+    - entity
+    - type
+    - created
+    - last_updated
+    - confidence
+    - status
+  
+  fields:
+    entity:
+      type: string
+      description: "Canonical name for this entity"
+      max_length: 200
+    
+    type:
+      type: enum
+      values: [lab, model, person, company, investor, regulator, theme, opportunity]
+    
+    aliases:
+      type: array
+      items: string
+      description: "Alternate names, tickers, shorthand"
+      max_items: 20
+    
+    created:
+      type: string
+      format: date-time
+      description: "ISO 8601 date first created"
+    
+    last_updated:
+      type: string
+      format: date-time
+      description: "ISO 8601 date last modified"
+    
+    last_confirmed:
+      type: string
+      format: date
+      description: "ISO 8601 date last corroborated by digest"
+      nullable: true
+    
+    confidence:
+      type: number
+      minimum: 0.0
+      maximum: 1.0
+      description: "Current confidence score (0.0-1.0)"
+    
+    status:
+      type: enum
+      values: [active, dormant, archived]
+    
+    sector_tags:
+      type: array
+      items:
+        type: enum
+        values:
+          - frontier-models
+          - open-source
+          - infrastructure
+          - chips
+          - safety
+          - policy
+          - agents
+          - robotics
+          - enterprise
+          - research
+          - defense
+          - healthcare
+          - finance
+          - developer-tools
+          - foundational-research
+      max_items: 10
+    
+    summary:
+      type: string
+      description: "One-line entity description"
+      max_length: 500
+    
+    digest_sources:
+      type: array
+      items: string
+      description: "Digest filenames that contributed (most recent first)"
+
+# ============================================
+# SIGNAL SCHEMA
+# ============================================
+signal:
+  required:
+    - id
+    - type
+    - value
+    - date
+    - confidence
+    - source_digest
+  
+  fields:
+    id:
+      type: string
+      format: "SIG-YYYYMMDD-XXX"
+      unique: true
+    
+    type:
+      type: enum
+      values:
+        - model_release
+        - benchmark_result
+        - funding_round
+        - partnership
+        - acquisition
+        - talent_move
+        - research_paper
+        - policy_action
+        - product_launch
+        - pricing_change
+        - infrastructure
+        - open_source_release
+        - safety_incident
+        - competitive_move
+        - market_signal
+        - rhetoric
+    
+    value:
+      type: string
+      description: "Factual statement of what happened"
+      max_length: 1000
+    
+    date:
+      type: string
+      format: date
+      description: "When signal occurred"
+    
+    confidence:
+      type: enum
+      values: [high, medium, low, unverified]
+    
+    source_digest:
+      type: string
+      description: "Filename of parent digest"
+    
+    original_sources:
+      type: array
+      items: string
+      description: "Source attributions from Sentinel"
+    
+    contradicts:
+      type: array
+      items: string
+      description: "Signal IDs that contradict this"
+    
+    supersedes:
+      type: array
+      items: string
+      description: "Signal IDs this replaces"
+
+# ============================================
+# RELATION TYPES
+# ============================================
+relation_types:
+  bidirectional:
+    - competes_with
+    - partners_with
+    - subsidiary_of  # parent_of implied
+    - invested_by    # invests_in implied
+    - regulates      # regulated_by implied
+    - depends_on     # depended_on_by implied
+    - supplies_to    # supplied_by implied
+  
+  unidirectional:
+    - builds_on        # model lineage
+    - employs_key_person # person employed_by implied
+    - spun_off_from     # spin_off_of implied
+    - open_sourced_by   # open_sourced implied
+
+# ============================================
+# TYPE-SPECIFIC SCHEMAS
+# ============================================
+type_specific:
+  
+  model:
+    required_block: model_details
+    model_details:
+      family:
+        type: string
+        description: "Model family name"
+        examples: [Claude, GPT, Gemini, Llama, Mistral]
+      
+      version:
+        type: string
+        description: "Specific version identifier"
+      
+      release_date:
+        type: string
+        format: date
+        nullable: true
+      
+      parameter_count:
+        type: string
+        nullable: true
+        examples: ["175B", "1.8T", "Mixture-of-Experts"]
+      
+      context_window:
+        type: integer
+        nullable: true
+        unit: tokens
+      
+      modalities:
+        type: array
+        items:
+          enum: [text, image, video, audio, code, tools]
+      
+      license:
+        type: enum
+        values: [proprietary, open-weights, open-source, research-only]
+      
+      api_pricing:
+        type: object
+        properties:
+          input_per_m:
+            type: number
+            nullable: true
+            unit: USD
+          output_per_m:
+            type: number
+            nullable: true
+            unit: USD
+      
+      notable_benchmarks:
+        type: array
+        items:
+          type: object
+          properties:
+            name: string
+            score: string
+            date: {type: string, format: date}
+  
+  person:
+    required_block: person_details
+    person_details:
+      current_role:
+        type: string
+      
+      organization:
+        type: string
+        description: "Current employer/affiliation"
+      
+      x_handle:
+        type: string
+        nullable: true
+      
+      expertise:
+        type: array
+        items: string
+        examples: [alignment, scaling, reinforcement-learning, policy, infrastructure, NLP, computer-vision, robotics]
+      
+      influence_tier:
+        type: enum
+        values: [high, medium, niche]
+
+# ============================================
+# CONFIGURATION DEFAULTS
+# ============================================
+defaults:
+  confidence_decay:
+    enabled: true
+    daily_decay_rate: 0.95  # Multiply by 0.95 per day without confirmation
+    min_confidence: 0.1
+    grace_period_days: 7  # No decay for first week
+  
+  signal_archival:
+    archive_after_days: 90
+    compress_after_days: 30
+  
+  digest_retention:
+    keep_in_processed: 30
+    archive_to_cold_storage: true
+
+# ============================================
+# VALIDATION RULES
+# ============================================
+validation:
+  require_model_details_for_type_model: true
+  require_person_details_for_type_person: true
+  check_relation_integrity: true
+  check_signal_id_uniqueness: true
+  check_digest_source_existence: true
+  warn_on_missing_last_confirmed: true

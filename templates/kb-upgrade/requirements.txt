@@ -1,0 +1,14 @@
+# OpenClaw KB Semantic Search Requirements
+# Python 3.10+
+
+# Core dependencies
+faiss-cpu==1.7.4
+numpy==1.24.3
+requests==2.31.0
+PyYAML==6.0.1
+networkx==3.2.1
+python-dotenv==1.0.1
+
+# Optional but recommended
+python-dateutil==2.8.2
+pytest==8.3.3
