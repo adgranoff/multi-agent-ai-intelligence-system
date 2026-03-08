@@ -75,6 +75,7 @@ That is the main differentiator of this system.
 ## Included In This Export
 
 - sanitized templates for `workspace-collector`, `workspace-sentinel`, and `workspace-librarian`
+- sanitized runtime files for agent boot order, role doctrine, and ops contracts
 - workflow-specific custom OpenClaw skills
 - sanitized KB engine code for embeddings, indexing, graphing, decay, validation, and operations
 - knowledge-base layout templates
@@ -99,9 +100,26 @@ docs/
   knowledge-base.md
   advanced-kb.md
 templates/
+  shared/
+    USER.md
+    BOOTSTRAP.md
   workspace-collector/
+    SOUL.md
+    TOOLS.md
+    USER.md
   workspace-sentinel/
+    SOUL.md
+    TOOLS.md
+    USER.md
   workspace-librarian/
+    SOUL.md
+    TOOLS.md
+    USER.md
+  workspace-modelscout/
+    AGENTS.md
+    SOUL.md
+    TOOLS.md
+    USER.md
   knowledge-base/
   kb-upgrade/
     config/
