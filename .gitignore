@@ -1,6 +1,7 @@
 # Local environment
 .env
 .env.*
+!examples/.env.example
 .python-version
 .venv/
 venv/
@@ -31,4 +32,3 @@ digests/archive/
 *.faiss
 *.jsonl
 *.log
-

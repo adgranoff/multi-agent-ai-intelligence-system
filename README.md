@@ -95,6 +95,7 @@ That is the main differentiator of this system.
 
 ```text
 docs/
+  getting-started.md
   architecture.md
   cron-and-delivery.md
   knowledge-base.md
@@ -137,6 +138,7 @@ skills/
   openclaw-digest-pipeline/
   openclaw-librarian-kb-curation/
 examples/
+  .env.example
   schedule.md
 ```
 
@@ -212,6 +214,8 @@ They are custom skills, not bundled-package edits, so they survive OpenClaw upgr
 3. Add your own fetchers, model settings, digests, and delivery endpoints.
 4. Keep every secret in local-only config.
 5. Treat this repo as the workflow overlay, not as a replacement for upstream OpenClaw.
+
+Start with [docs/getting-started.md](docs/getting-started.md) if you want a concrete path from clone to first dry run.
 
 ## Before You Publish Your Own Version
 
