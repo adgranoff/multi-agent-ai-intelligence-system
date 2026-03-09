@@ -2,172 +2,123 @@
 
 ## Purpose
 
-The advanced KB is the persistence and retrieval layer behind the Collector -> Sentinel -> Librarian workflow.
+The advanced KB runtime is the maintenance and retrieval layer behind the digest pipeline.
 
-Its job is to turn dated intelligence artifacts into structured, queryable memory:
+Its job is to make a live markdown KB:
 
-- entities that persist over time
-- signals that record what changed and when
-- relations that connect entities across the market
-- indexes that let you retrieve meaning, not just filenames
-- decay logic that keeps stale intelligence from looking permanently current
+- searchable by meaning
+- age-aware through confidence decay
+- optionally relation-aware when graph structure is worth the operational complexity
+
+## Clean End State
+
+The preferred architecture is:
+
+```text
+canonical markdown KB
+  -> semantic index
+  -> decay state
+  -> optional graph exports
+```
+
+That means one source of truth for knowledge and a separate runtime for retrieval artifacts.
 
 ## Core Capabilities
 
-### Schema-Driven Knowledge
+### Semantic Retrieval
 
-The KB is not freeform markdown only. It is governed by a schema in [templates/kb-upgrade/config/schema.yaml](../templates/kb-upgrade/config/schema.yaml).
+The runtime can:
 
-The schema defines:
-
-- entity types such as `lab`, `model`, `person`, `company`, `investor`, `regulator`, `theme`, and `opportunity`
-- required metadata like `confidence`, `status`, `created`, and `last_confirmed`
-- structured signal blocks
-- relation types
-- type-specific blocks for models and people
-
-### Embeddings And Vector Search
-
-The semantic layer uses:
-
-- chunking for entity content
-- embeddings from OpenRouter by default
-- a local deterministic fallback in strict or offline environments
-- FAISS for vector storage
-- an embedding cache so repeated rebuilds stay cheap
+- chunk canonical KB files
+- generate embeddings
+- store vectors in a local index
+- retrieve relevant KB sections for operator questions or downstream agents
 
 Relevant files:
 
-- [embedder.py](../templates/kb-upgrade/src/embedder.py)
-- [index_manager.py](../templates/kb-upgrade/src/index_manager.py)
-- [build_index.py](../templates/kb-upgrade/build_index.py)
-- [config.yaml](../templates/kb-upgrade/config/config.yaml)
+- [templates/kb-upgrade/src/chunker.py](../templates/kb-upgrade/src/chunker.py)
+- [templates/kb-upgrade/src/embedder.py](../templates/kb-upgrade/src/embedder.py)
+- [templates/kb-upgrade/src/index_manager.py](../templates/kb-upgrade/src/index_manager.py)
+- [templates/kb-upgrade/src/search.py](../templates/kb-upgrade/src/search.py)
 
-### Graph Intelligence
+### Live-KB Query Helper
 
-The graph layer exports entity relationships into `indexes/relations.json` and supports both explicit and inferred edges.
+The runtime includes a query helper for operator-facing assistants.
 
-Examples of graph use:
+Its job is to:
 
-- model lineage
-- competitors and partnerships
-- supply dependencies
-- investor portfolio overlap
-- talent movement between labs
-- shared foundations across model families
+- run semantic search first
+- collapse noisy duplicate chunks
+- return the best matches
+- suggest which canonical files the assistant should read next
 
-Relevant files:
+Relevant file:
 
-- [graph_builder.py](../templates/kb-upgrade/src/graph_builder.py)
-- [graph_query.py](../templates/kb-upgrade/src/graph_query.py)
-
-### Hybrid Retrieval
-
-The KB supports both:
-
-- pure semantic search over chunk embeddings
-- combined search that merges semantic evidence with graph traversal
-
-That lets the system answer queries like:
-
-- “Which labs are competing with OpenAI?”
-- “What models build on the same foundation?”
-- “Which companies share investors and infrastructure exposure?”
-
-Relevant files:
-
-- [search.py](../templates/kb-upgrade/src/search.py)
-- [combined_search.py](../templates/kb-upgrade/src/combined_search.py)
+- [templates/kb-upgrade/query_live_kb.py](../templates/kb-upgrade/query_live_kb.py)
 
 ### Confidence Decay
 
-The KB does not assume truth stays fresh forever.
+The KB should not treat old claims as permanently current.
 
-Confidence decay:
+Decay can:
 
-- lowers confidence when an entity has not been reconfirmed
-- uses different rates for different entity types
-- supports overrides for status and signal types
-- highlights stale or below-threshold entities for review
+- lower confidence when claims are not reconfirmed
+- apply different rates by entity type
+- surface stale or low-confidence records for review
 
 Relevant files:
 
-- [decay.py](../templates/kb-upgrade/src/decay.py)
-- [decay-rules.yaml](../templates/kb-upgrade/config/decay-rules.yaml)
+- [templates/kb-upgrade/src/decay.py](../templates/kb-upgrade/src/decay.py)
+- [templates/kb-upgrade/config/decay-rules.yaml](../templates/kb-upgrade/config/decay-rules.yaml)
 
-## Runtime Layout
+### Graph And Hybrid Retrieval
 
-The public template includes the KB engine under `templates/kb-upgrade/`.
+Graph support is useful when your KB contains stable, inspectable relation structure.
 
-Key parts:
+Good use cases:
 
-- `kb_ops.py`
-  One CLI for process, search, graph, decay, validation, status, reports, and backup flows.
-- `src/`
-  Implementation modules for extraction, merging, indexing, graphing, search, and reporting.
-- `config/`
-  Schema, embeddings/index settings, and decay rules.
+- model lineage
+- competitor and partner maps
+- supply dependencies
+- investor overlap
+- talent movement
 
-The live data plane is separate:
+But graph should be optional. If your canonical KB is not relation-rich enough yet, do not force graph into production just to claim a feature.
 
-- `entities/`
-- `themes/`
-- `digests/`
-- `indexes/`
-- `reports/`
-- `logs/`
+Relevant files:
 
-Those runtime outputs are intentionally not published in this export.
+- [templates/kb-upgrade/src/graph_builder.py](../templates/kb-upgrade/src/graph_builder.py)
+- [templates/kb-upgrade/src/graph_query.py](../templates/kb-upgrade/src/graph_query.py)
+- [templates/kb-upgrade/src/combined_search.py](../templates/kb-upgrade/src/combined_search.py)
 
-## How It Fits The Agent Workflow
+## How It Fits The Workflow
 
-### Collector
+```text
+Collector -> Sentinel -> Librarian -> canonical KB -> KB runtime -> operator assistant
+```
 
-Collector does not touch embeddings or graph logic directly. Its job is to produce trustworthy source artifacts and freshness metadata.
+Meaning:
 
-### Sentinel
+- Collector finds the inputs
+- Sentinel turns them into intelligence
+- Librarian writes durable memory
+- the runtime makes that memory retrievable
+- the assistant uses retrieval to answer interactive questions
 
-Sentinel turns source artifacts into digests and memos that are structured enough for Librarian to ingest cleanly.
-
-### Librarian
-
-Librarian is the writer into the KB. It updates canonical entities, themes, signals, and relations.
-
-### KB Engine
-
-The engine makes Librarian’s output usable:
-
-- semantic retrieval over prior intelligence
-- graph traversal for relationship questions
-- anomaly and contradiction detection
-- decay-driven revalidation
-
-## Operating Loop
-
-Typical loop:
-
-1. Sentinel drops a new digest into the incoming area.
-2. Librarian extracts and merges signals into canonical entity files.
-3. The index is rebuilt or incrementally refreshed.
-4. The graph is rebuilt.
-5. Decay and validation are run on schedule.
-6. Status, snapshots, and weekly reports summarize the health of the KB.
-
-## Public Sharing Boundary
+## What To Publish
 
 Safe to publish:
 
-- schema
-- code
 - templates
-- sample folder layouts
-- operational documentation
+- schemas
+- query helpers
+- example layouts
+- documentation
 
 Do not publish:
 
+- generated vector indexes
 - embedding caches
-- live vector indexes
-- logs
-- private entity files
-- digests and memos containing private analysis
-- real delivery targets or credentials
+- decay state from a live system
+- live entity files
+- logs, reports, or operator-specific analysis

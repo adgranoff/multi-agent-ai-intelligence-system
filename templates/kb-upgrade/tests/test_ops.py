@@ -26,8 +26,8 @@ def test_local_embedding_fallback_preserves_lexical_similarity(tmp_path: Path):
     ensure_kb_dirs(kb)
     emb = Embedder(kb)
 
-    v1 = emb._local_embedding("Kimi K2.5 multimodal model pricing")
-    v2 = emb._local_embedding("Kimi model multimodal K2.5 costs")
+    v1 = emb._local_embedding("ExampleModel 2.5 multimodal model pricing")
+    v2 = emb._local_embedding("ExampleModel multimodal 2.5 costs")
     v3 = emb._local_embedding("NVIDIA supply chain datacenter chips")
 
     assert _cosine(v1, v2) > _cosine(v1, v3)

@@ -2,47 +2,59 @@
 
 ## Delivery Rule
 
-For scheduled announce jobs, a run is not successful unless the final payload is actually deliverable.
+For delivery-facing jobs, a run is not successful unless the final payload is actually usable.
 
-Do not treat `status=ok` as success when:
+Do not treat a run as successful when:
 
-- `deliveryStatus != delivered`
 - the output artifact is missing
-- the final stdout is blank
+- the latest pointer is stale
+- the final payload is blank
 - the job prints commentary instead of the summary
+- the delivery adapter rejects the payload
 
 ## Wrapper Pattern
 
-Every delivery-facing deterministic job should follow this sequence:
+Every delivery-facing deterministic job should follow this order:
 
 1. run the real script
 2. validate the expected artifact
 3. render a short plain-text summary
 4. print exactly that summary
 
-## Why This Matters
+## Buffering Rule
 
-Many cron failures are not scheduler failures. They are end-of-pipeline failures:
+Do not schedule the pipeline as tightly as possible.
 
-- blank payloads
-- stale or empty artifacts
-- meta commentary leaking into stdout
-- partially successful runs with failed delivery
+Use explicit buffers between:
 
-## Recommended Files
+- Collector and Sentinel
+- Sentinel and Librarian
+- Librarian and KB runtime
 
-- shell wrapper: `run-...-for-cron.sh`
-- renderer: `render_....py`
-- artifact file written before delivery
+Median runtime is not enough. Schedule for tail latency and occasional retries.
+
+## Maintenance Rule
+
+Push jobs and maintenance jobs should be separated.
+
+Good pattern:
+
+```text
+delivery-facing intelligence first
+maintenance-only retrieval refresh second
+```
+
+That avoids a long-running maintenance task breaking a user-visible delivery step.
 
 ## Debugging Order
 
-1. inspect cron run record
-2. inspect delivery status
-3. inspect expected artifact
-4. inspect wrapper stdout path
-5. inspect renderer output
+1. inspect the run record
+2. inspect the expected artifact
+3. inspect the latest pointer
+4. inspect the rendered summary
+5. inspect the delivery adapter
+6. inspect maintenance-only follow-on jobs
 
 ## Cost Rule
 
-Do not spend strong-model tokens on jobs that only need to run a script and print a summary.
+Do not spend expensive model tokens on jobs that only need to execute a script and print a deterministic summary.

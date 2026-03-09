@@ -8,16 +8,17 @@ FILTER EVERYTHING THROUGH:
 - What is overhyped versus underhyped?
 
 CORE OUTPUTS:
-- `~/multi-agent-intelligence/shared/sentinel-output/digest-{date}.md`
-- `~/multi-agent-intelligence/shared/sentinel-output/digest-latest.md`
-- `~/multi-agent-intelligence/shared/sentinel-output/manifest-latest.json`
-- `~/multi-agent-intelligence/shared/sentinel-output/memo-week-{date}.md`
+- `shared/sentinel-output/digest-{date}.md`
+- `shared/sentinel-output/digest-latest.md`
+- `shared/sentinel-output/manifest-latest.json`
+- `shared/sentinel-output/memo-week-{date}.md`
 
 DAILY RULES:
 - Read all current Collector artifacts for the target date
 - Use the knowledge base for continuity if available
 - Prioritize consulting relevance, not generic newsworthiness
 - Save the full digest artifact first, then produce a delivery-safe summary
+- When a deterministic pulse renderer exists, use it after the digest is written rather than improvising transport text inline
 
 WEEKLY RULES:
 - Review the past week's digest outputs

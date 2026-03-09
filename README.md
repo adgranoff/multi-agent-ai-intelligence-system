@@ -1,246 +1,265 @@
 # Multi-Agent AI Intelligence System
 
-Multi-Agent AI Intelligence System is a narrow, production-oriented template pack for one specific workflow:
+This repository is a sanitized reference implementation for a narrow workflow:
 
-`Collector -> Sentinel -> advanced knowledge base`
+```text
+Collector -> Sentinel -> Librarian -> Knowledge Base Runtime -> Operator Assistant
+```
 
-It is not a general-purpose agent starter kit. It excludes personal assistants, device control, unrelated automations, and platform-specific runtime code. This repo exists to show how to run a repeatable AI intelligence pipeline that turns daily source noise into durable strategic memory.
+It is not a general-purpose agent starter kit. It is a production-shaped pattern for turning recurring market signals into durable, queryable memory.
 
-## Best Use
+## What This System Does
 
-Use this repo as an input pack for Claude Code, Codex, or another coding agent. Give the agent this repository plus your desired environment, then have it adapt the templates, paths, scheduler, delivery hooks, and secrets model to your setup.
+This system turns raw AI market signals into:
 
-## What This System Actually Does
+- a daily market-awareness pulse delivered through a messaging channel of your choice
+- a maintained knowledge base
+- semantic retrieval over that knowledge base
+- a weekly recap
+- on-demand KB answers through an operator-facing assistant
 
-The system has three operating agents and one persistent intelligence layer:
+The result is a workflow that pushes high-signal updates on a schedule while still supporting interactive queries later.
 
-1. `Collector`
-   - fetches and normalizes source material
-   - writes dated raw artifacts
-   - validates freshness, completeness, and failure states
-   - publishes a manifest as the contract for downstream stages
-2. `Sentinel`
-   - reads Collector artifacts and freshness metadata
-   - produces daily digests and weekly memos
-   - writes latest pointers for downstream consumption
-   - renders concise delivery-safe summaries
-3. `Librarian`
-   - ingests Sentinel output into the knowledge base
-   - merges recurring signals into canonical entities and themes
-   - refreshes deterministic views like outreach and dashboard summaries
-4. `Advanced KB Engine`
-   - maintains embeddings and a semantic index
-   - builds a relationship graph across labs, models, companies, people, regulators, and themes
-   - supports semantic search, graph queries, and combined search
-   - decays stale confidence over time to keep the KB current
+## End-to-End Daily Flow
 
-## Why The KB Layer Matters
+```text
+11:30 AM
+Collector
+  gathers raw source files from the configured source set
+  writes collector artifacts + freshness manifest
+        |
+        v
+12:15 PM
+Sentinel Daily
+  reads collector manifest + raw source files
+  writes:
+  - shared/sentinel-output/digest-YYYY-MM-DD.md
+  - shared/sentinel-output/digest-latest.md
+  - shared/sentinel-output/manifest-latest.json
+  sends a daily market pulse through the configured delivery channel
+        |
+        v
+1:00 PM
+Librarian Daily
+  reads sentinel latest digest + manifest
+  updates canonical KB files:
+  - companies/*.md
+  - themes/*.md
+  - opportunities/active.md
+  - content-ideas/active.md
+  - daily-digests/YYYY-MM-DD.md
+  rebuilds:
+  - index.md
+  - decision-dashboard.md
+  - outreach-queue.md
+        |
+        v
+1:30 PM
+KB Runtime Daily
+  reads the live knowledge-base/
+  refreshes:
+  - indexes/vector-store/index.faiss
+  - indexes/vector-store/metadata.json
+  - indexes/vector-store/embedding-cache.json
+  - indexes/decay-state.json
+```
 
-Most intelligence systems stop at “generate a digest.” This one does not.
+## Assistant Query Path
 
-The knowledge base is treated as the durable product:
+```text
+Operator
+   |
+   v
+Operator Assistant
+  detects AI / market / company / strategy / opportunity questions
+  runs a live KB query:
+  python3 kb-runtime/query_live_kb.py "<question>" --json
+   |
+   v
+Semantic KB Runtime
+  searches the live vector index
+  returns top matches + files_to_read
+   |
+   v
+Operator Assistant
+  reads the top canonical KB files
+  answers with dates, confidence, and context
+```
 
-- digests are short-lived inputs
-- entities and themes are long-lived memory
-- semantic retrieval makes old intelligence usable
-- graph structure turns isolated facts into relationship intelligence
-- confidence decay prevents stale claims from looking permanently true
+## Weekly Flow
 
-That is the main differentiator of this system.
+```text
+Sunday 2:00 PM
+Sentinel Weekly
+  reads recent daily digests + KB context
+  writes a weekly memo artifact
+  sends a weekly market recap through the configured delivery channel
+```
 
-## Advanced KB Capabilities Included
+## Why The Timing Matters
 
-- `Schema-driven entities`
-  The KB tracks typed entities such as labs, models, people, companies, investors, regulators, themes, and opportunities.
-- `Structured signals`
-  Each entity can accumulate dated signals with confidence, source digests, contradictions, and supersession links.
-- `Embeddings + vector index`
-  Chunks are embedded and stored in a FAISS-backed vector index with an embedding cache.
-- `Semantic search`
-  Queries can retrieve the most relevant KB chunks, filtered by entity type, sector, date window, and minimum confidence.
-- `Relationship graph`
-  A directed graph captures explicit and inferred relations such as competition, partnerships, supply dependencies, model lineage, talent flows, and portfolio overlap.
-- `Combined search`
-  Queries can mix semantic evidence and graph traversal to answer higher-level questions like “who competes with X and shares the same infrastructure.”
-- `Confidence decay`
-  Entity confidence degrades according to time, type, status, and special conditions so stale intelligence is surfaced and revalidation is encouraged.
-- `Operational reporting`
-  The KB exposes status, validation, anomaly detection, model snapshots, theme reports, and weekly memo generation.
+- Collector finishes before Sentinel starts
+- Sentinel writes artifacts before Librarian reads them
+- Librarian updates canonical KB files before the KB runtime refreshes retrieval state
+- delivery-facing summaries happen before maintenance-only jobs
+- runtime buffers matter more than exact clock times
+
+## System Layers
+
+### 1. Collector
+
+Collector is bounded ingestion.
+
+It should:
+
+- gather raw source material
+- normalize output shape
+- write dated artifacts
+- publish a manifest that records freshness, failures, and counts
+
+Collector should stay deterministic and cheap.
+
+### 2. Sentinel
+
+Sentinel is the synthesis layer.
+
+It should:
+
+- read only the source artifacts listed in the Collector manifest
+- write a dated daily digest
+- write a dated weekly memo
+- publish latest pointers for downstream consumers
+- render concise delivery-safe summaries after artifacts exist
+
+### 3. Librarian
+
+Librarian is the curation layer.
+
+It should:
+
+- read the latest digest artifact
+- merge recurring signals into canonical KB files
+- preserve dated archives
+- regenerate deterministic views such as the dashboard and outreach queue
+
+Librarian should update existing files before creating new ones.
+
+### 4. Knowledge Base Runtime
+
+The KB runtime is the retrieval and maintenance plane behind Librarian.
+
+It should:
+
+- build and refresh embeddings over the live KB
+- maintain a vector index for semantic retrieval
+- track confidence decay so stale claims do not look permanently current
+- optionally maintain a relation graph when the underlying KB structure supports it cleanly
+
+This runtime should operate on the same knowledge base that Librarian curates. The clean end state is one canonical KB, not two competing stores.
+
+### 5. Operator Assistant
+
+The operator assistant sits on top of the KB.
+
+It should:
+
+- detect when a question is really a KB query
+- run semantic retrieval first
+- read the top canonical files returned by retrieval
+- answer with dates, confidence, and strategic context
+
+This keeps the scheduled intelligence workflow and the interactive query workflow connected.
+
+## Live Advanced KB Capabilities Represented Here
+
+- markdown-first canonical KB
+- Collector intake with manifest-driven freshness tracking
+- daily market pulse delivery from Sentinel
+- daily Librarian KB maintenance
+- deterministic dashboard and outreach generation
+- vector-backed semantic retrieval
+- query helper for an operator assistant
+- confidence decay over live KB content
+- optional graph and hybrid retrieval when relations are mature enough to justify them
+- failure-alert friendly workflow boundaries
 
 ## Design Principles
 
-- Deterministic work stays deterministic.
-- Artifacts are written before summaries are delivered.
-- The latest pointer is part of the contract, not a convenience.
-- KB curation is merge-first, not create-first.
-- Search quality depends on structure, not just embeddings.
-- Cron success is not success unless the output is actually deliverable.
+- one canonical KB
+- deterministic work stays deterministic
+- artifacts are written before summaries are delivered
+- latest pointers are part of the contract
+- merge-first curation beats duplicate creation
+- retrieval quality depends on structure, not embeddings alone
+- scheduled success is not real success unless the final output is actually usable
 
-## Included In This Export
+## Meaning
 
-- sanitized templates for `workspace-collector`, `workspace-sentinel`, and `workspace-librarian`
-- sanitized runtime files for agent boot order, role doctrine, and ops contracts
-- workflow-specific skills and runbooks
-- sanitized KB engine code for embeddings, indexing, graphing, decay, validation, and operations
-- synthetic sample digest and entity files that demonstrate the schema without exposing live data
-- knowledge-base layout templates
-- architecture, cron, delivery, and KB documentation
-
-## Excluded On Purpose
-
-- vendor-specific platform runtime code
-- unrelated agents and automations
-- personal memory, session history, and run logs
-- secrets, tokens, and local config values
-- private digests, memos, and client-specific KB content
-- real delivery endpoints and chat identifiers
-- generated indexes, caches, backups, and other live runtime artifacts
+- Collector finds the raw signals
+- Sentinel turns them into market intelligence
+- Librarian turns that into durable knowledge memory
+- the KB runtime makes that memory searchable by meaning
+- the operator assistant becomes the phone-facing interface to all of it
 
 ## Repository Layout
 
 ```text
 docs/
-  getting-started.md
   architecture.md
-  cron-and-delivery.md
-  knowledge-base.md
   advanced-kb.md
-templates/
-  shared/
-    USER.md
-    BOOTSTRAP.md
-  workspace-collector/
-    SOUL.md
-    TOOLS.md
-    USER.md
-  workspace-sentinel/
-    SOUL.md
-    TOOLS.md
-    USER.md
-  workspace-librarian/
-    SOUL.md
-    TOOLS.md
-    USER.md
-  workspace-modelscout/
-    AGENTS.md
-    SOUL.md
-    TOOLS.md
-    USER.md
-  knowledge-base/
-  kb-upgrade/
-    config/
-    src/
-    tests/
-    kb_ops.py
-    validate_schema.py
-    build_index.py
-    daily_run.sh
-    setup.sh
-skills/
-  scheduler-runbook/
-  delivery-debugging/
-  wrapper-hardening/
-  digest-pipeline/
-  librarian-kb-curation/
+  cron-and-delivery.md
+  getting-started.md
+  knowledge-base.md
 examples/
   .env.example
   schedule.md
   sample-digest.md
   sample-entity-lab.md
+skills/
+  delivery-debugging/
+  digest-pipeline/
+  librarian-kb-curation/
+  scheduler-runbook/
+  wrapper-hardening/
+templates/
+  knowledge-base/
+  shared/
+  workspace-collector/
+  workspace-sentinel/
+  workspace-librarian/
+  workspace-modelscout/
+  kb-upgrade/
 ```
 
-## End-To-End Flow
+## What Is Included
 
-### Collector
+- sanitized Collector, Sentinel, Librarian, and model-landscape templates
+- knowledge-base templates and example files
+- advanced KB runtime code for indexing, search, decay, and maintenance
+- deterministic reference scripts for market-pulse rendering and KB index generation
+- workflow docs and runbooks
+- synthetic examples only
 
-Collector is ingestion-only and should be cheap, bounded, and deterministic.
+## What Is Excluded
 
-Expected outputs:
+- runtime secrets or credentials
+- real delivery endpoints
+- local machine paths
+- private digests, memos, or KB contents
+- generated indexes, caches, logs, and backups
+- personal notes, session history, or operator identity details
 
-- `shared/collector-ainews-YYYY-MM-DD.md`
-- `shared/collector-xdigest-YYYY-MM-DD.md`
-- `shared/collector-youtube-YYYY-MM-DD.md`
-- `shared/collector-manifest-latest.json`
-- `shared/manifests/collector-manifest-YYYY-MM-DD.json`
+## Recommended Reading Order
 
-The manifest tells downstream stages whether each source is `fresh`, `quiet`, `failed`, `invalid`, or `missing`.
-
-### Sentinel
-
-Sentinel turns source artifacts into strategic intelligence artifacts.
-
-Expected outputs:
-
-- `shared/sentinel-output/digest-YYYY-MM-DD.md`
-- `shared/sentinel-output/digest-latest.md`
-- `shared/sentinel-output/manifest-latest.json`
-- `shared/sentinel-output/memo-week-YYYY-MM-DD.md`
-
-Sentinel should write the artifact first and only then render a concise delivery-safe summary.
-
-### Librarian
-
-Librarian is the curation layer. It promotes recurring signals into durable memory.
-
-Primary responsibilities:
-
-- file dated daily digests and weekly memos
-- update canonical entity and theme files
-- merge recurring evidence instead of creating duplicates
-- refresh deterministic views like `outreach-queue.md` and `decision-dashboard.md`
-
-### Advanced KB Runtime
-
-The KB runtime is the retrieval and maintenance plane behind Librarian:
-
-- `config/schema.yaml` defines the entity, signal, and relation model
-- `src/embedder.py` handles embedding generation and caching
-- `src/index_manager.py` and `build_index.py` maintain the vector store
-- `src/search.py` performs semantic retrieval
-- `src/graph_builder.py` and `src/graph_query.py` maintain and query the relation graph
-- `src/combined_search.py` merges graph evidence with semantic evidence
-- `src/decay.py` finds stale or low-confidence entities and can apply decay updates
-- `kb_ops.py` provides a single operational CLI over the whole KB engine
-
-## Workflow Skills Included
-
-These skills document how to operate this workflow reliably:
-
-- `scheduler-runbook`
-- `delivery-debugging`
-- `wrapper-hardening`
-- `digest-pipeline`
-- `librarian-kb-curation`
-
-They are plain workflow skills, not platform patches, so they can be adapted to whatever agent framework or local automation setup you use.
-
-## How To Use This Repo
-
-1. Copy the Collector, Sentinel, Librarian, KB, and skill templates into your own workspace layout.
-2. Adjust paths, model settings, digests, and delivery hooks for your environment.
-3. Add your own fetchers and transport integrations.
-4. Keep every secret in local-only config.
-5. Treat this repo as a portable workflow template, not a complete platform distribution.
-
-Start with [docs/getting-started.md](docs/getting-started.md) if you want a concrete path from clone to first dry run.
+1. [docs/architecture.md](docs/architecture.md)
+2. [docs/knowledge-base.md](docs/knowledge-base.md)
+3. [docs/advanced-kb.md](docs/advanced-kb.md)
+4. [docs/cron-and-delivery.md](docs/cron-and-delivery.md)
+5. [docs/getting-started.md](docs/getting-started.md)
 
 ## Before You Publish Your Own Version
 
 1. Re-read [SANITIZATION.md](SANITIZATION.md).
-2. Confirm no digests, logs, indexes, or backups are present.
-3. Replace placeholder delivery targets and local paths with your own values.
-4. Keep third-party notices aligned with the tools and libraries you add.
-
-## Best Fit
-
-This system fits operators who want:
-
-- repeatable AI market and product intelligence
-- a daily intelligence pipeline instead of ad hoc browsing
-- a reusable consulting KB instead of a pile of markdown digests
-- retrieval over past intelligence through semantic search and graph structure
-- a workflow that cleanly separates bounded automation from LLM judgment
-
-## Attribution
-
-This repository is a platform-agnostic workflow template. It does not bundle any vendor runtime source code.
+2. Remove all generated runtime artifacts.
+3. Replace every transport, scheduler, and provider detail with your own environment-specific settings.
+4. Re-run a leakage search across the repo before publishing.

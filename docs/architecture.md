@@ -2,105 +2,127 @@
 
 ## System Overview
 
-This workflow is a compact multi-agent intelligence system with three operational agents, one shared artifact layer, and one advanced knowledge-base runtime.
+This workflow has five layers:
+
+1. Collector
+2. Sentinel
+3. Librarian
+4. Knowledge base runtime
+5. Operator assistant
+
+Each layer has one job. That separation is what keeps the system understandable and recoverable.
+
+## Layer Responsibilities
 
 ### Collector
 
-Purpose:
+Collector is ingestion-only.
+
+Responsibilities:
 
 - gather source material
 - normalize outputs
 - publish a freshness manifest
 
-Collector should be shell-first and deterministic.
+Collector should not improvise analysis or touch the KB.
 
 ### Sentinel
 
-Purpose:
+Sentinel is the synthesis layer.
 
-- transform source files into daily and weekly intelligence
-- publish latest pointers used by downstream stages
+Responsibilities:
 
-Sentinel is the main synthesis layer.
+- transform source artifacts into daily and weekly intelligence
+- write dated artifacts first
+- update latest pointers
+- render bounded delivery summaries afterward
 
 ### Librarian
 
-Purpose:
-
-- convert short-lived digests into long-lived consulting memory
-- update canonical company and theme files
-- refresh deterministic dashboards
-
 Librarian is the curation layer.
 
-### Advanced KB Runtime
+Responsibilities:
 
-Purpose:
+- convert short-lived digests into long-lived strategic memory
+- update canonical company, theme, opportunity, and content files
+- regenerate deterministic views
 
-- maintain the typed entity store behind Librarian
-- build and refresh embeddings, vector indexes, and graph indexes
-- expose semantic, graph, and hybrid retrieval
-- keep stale intelligence visible through confidence decay
+### Knowledge Base Runtime
 
-This runtime is the retrieval and maintenance layer, not a separate conversational agent.
+The KB runtime is the maintenance and retrieval layer.
+
+Responsibilities:
+
+- refresh semantic search state over the live KB
+- maintain confidence decay state
+- expose retrieval utilities for downstream use
+- optionally maintain graph and hybrid retrieval if relation structure is mature enough
+
+This runtime should sit on top of the same KB that Librarian curates. It should not become a separate competing data store.
+
+### Operator Assistant
+
+The operator assistant is the interface layer.
+
+Responsibilities:
+
+- receive interactive questions
+- detect when a query should use the KB
+- run retrieval first
+- read the top canonical files
+- answer with context, dates, and confidence
 
 ## Data Flow
 
 ```text
 external sources
-  -> Collector raw artifacts
-  -> collector manifest
+  -> Collector artifacts
+  -> Collector manifest
   -> Sentinel digest / memo artifacts
-  -> Sentinel latest pointers
-  -> Librarian KB updates
-  -> advanced KB indexes and relation graph
-  -> derived operational views
-  -> delivery-safe summaries
+  -> latest pointers
+  -> Librarian canonical KB updates
+  -> deterministic derived views
+  -> KB runtime refresh
+  -> operator assistant queries over the live KB
 ```
 
-## Artifact Contracts
+## Canonical Versus Derived
 
-### Collector contract
+Canonical data:
 
-Collector writes dated source files and a manifest that records:
+- company files
+- theme files
+- active opportunities
+- active content ideas
+- dated digest archives
 
-- `sourceDate`
-- `overallStatus`
-- per-source status
-- item counts
-- file metadata
+Derived data:
 
-### Sentinel contract
+- dashboard and outreach views
+- vector index files
+- decay state
+- optional graph exports
 
-Sentinel writes:
+Derived files should be regenerated, not hand-maintained as truth.
 
-- a dated digest or weekly memo
-- `digest-latest.md`
-- a lightweight manifest for downstream freshness awareness
+## Reliability Boundaries
 
-### Librarian contract
+- Collector succeeds only if the manifest is valid.
+- Sentinel succeeds only if the digest artifact exists.
+- Librarian succeeds only if canonical files and views refresh cleanly.
+- KB runtime succeeds only if retrieval state refreshes cleanly.
+- delivery-facing jobs are not successful unless the final payload is actually usable.
 
-Librarian updates:
+## Recommended Scheduling Pattern
 
-- canonical KB files
-- dated archive copies
-- deterministic views like outreach queue and decision dashboard
+```text
+Collector
+  -> buffer
+Sentinel
+  -> buffer
+Librarian
+  -> buffer
+KB runtime
+```
 
-### Advanced KB contract
-
-The KB runtime maintains:
-
-- schema-governed entity files
-- signal histories and relation data
-- `indexes/vector-store/` for semantic retrieval
-- `indexes/relations.json` for graph traversal
-- stale/low-confidence reporting for ongoing curation
-
-## Reliability Philosophy
-
-- bounded jobs should execute one primary path
-- artifact validation is mandatory
-- delivery payloads should be rendered, not improvised
-- stale latest pointers count as failure
-- embeddings and search should degrade visibly, not silently
-- graph inference should be explicit enough to inspect and validate
+Use real buffers between steps. Do not stack jobs back-to-back just because median runtime looks fine.

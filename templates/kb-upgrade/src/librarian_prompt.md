@@ -83,15 +83,15 @@ You MUST output valid JSON matching this schema exactly.
   ],
   "new_entities": [
     {
-      "name": "Kimi K2.5",
+      "name": "ExampleModel 2.5",
       "type": "model",
-      "aliases": ["kimi-k2.5", "Moonshot Kimi"],
+      "aliases": ["examplemodel-2.5", "ExampleModel"],
       "summary": "One-line description of this entity",
       "sector_tags": ["frontier-models", "enterprise"],
       "signals": [...],
       "relations": [...],
       "model_details": {
-        "family": "Kimi",
+        "family": "ExampleModel",
         "version": "2.5",
         "context_window": 256000,
         "modalities": ["text", "image"],

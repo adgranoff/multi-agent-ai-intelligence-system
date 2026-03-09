@@ -27,7 +27,7 @@ python -m pip install -r requirements.txt
 
 mkdir -p intelligence-kb/{entities/{labs,models,people,companies,investors,regulators},themes,opportunities,digests/{incoming,processed,archive},indexes/vector-store,reports/{weekly,snapshots},config,logs}
 
-echo "If needed, add OPENROUTER_API_KEY to .env"
+echo "If needed, add EMBEDDING_PROVIDER_KEY to .env"
 python validate_schema.py --kb-path ./intelligence-kb || true
 
 echo "Setup complete. Sentinel should deposit digests to intelligence-kb/digests/incoming/."

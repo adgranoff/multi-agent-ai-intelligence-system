@@ -112,19 +112,19 @@ def read_config(kb_root: Path) -> Dict[str, Any]:
 
 
 def find_api_key() -> str:
-    """Read OpenRouter API key from env or .env."""
-    key = os.getenv("OPENROUTER_API_KEY", "").strip()
+    """Read embedding provider API key from env or .env."""
+    key = os.getenv("EMBEDDING_PROVIDER_KEY", "").strip()
     if key:
         return key
     env_path = Path.cwd() / ".env"
     if env_path.exists():
         for line in env_path.read_text(encoding="utf-8").splitlines():
-            if line.startswith("OPENROUTER_API_KEY="):
+            if line.startswith("EMBEDDING_PROVIDER_KEY="):
                 return line.split("=", 1)[1].strip().strip('"').strip("'")
     parent_env = Path.cwd().parent / ".env"
     if parent_env.exists():
         for line in parent_env.read_text(encoding="utf-8").splitlines():
-            if line.startswith("OPENROUTER_API_KEY="):
+            if line.startswith("EMBEDDING_PROVIDER_KEY="):
                 return line.split("=", 1)[1].strip().strip('"').strip("'")
     return ""
 

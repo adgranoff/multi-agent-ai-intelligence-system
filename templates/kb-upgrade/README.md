@@ -1,23 +1,27 @@
-# Enhanced Knowledge Base Template
+# Knowledge Base Runtime Template
 
-Sanitized KB engine template for the Collector -> Sentinel -> Librarian workflow.
+Sanitized runtime template for the digest-to-KB workflow.
 
-## What It Does
+## What It Represents
 
-- Ingests Sentinel digests from `intelligence-kb/digests/incoming/`
-- Uses Librarian extraction + merger to update structured entities/themes
-- Maintains semantic index (FAISS + embedding cache)
-- Maintains relationship graph (NetworkX + JSON export)
-- Supports semantic search, graph queries, combined search, decay, validation, reporting, and operations CLI
+This template shows how to layer retrieval and maintenance on top of a canonical markdown KB.
+
+Core functions:
+
+- process incoming digests into KB updates
+- refresh semantic search state
+- apply confidence decay
+- optionally build relation and hybrid retrieval layers
+- support an operator-facing query helper
 
 ## Template Layout
 
-- `intelligence-kb/` : data plane (entities, themes, digests, indexes, reports, logs, config)
 - `src/` : implementation modules
-- `tests/` : regression coverage for indexing, graph, and fallback behavior
-- `kb_ops.py` : master operations CLI
+- `tests/` : regression coverage
+- `kb_ops.py` : operations CLI
+- `query_live_kb.py` : operator-assistant query helper
 - `validate_schema.py` : schema validator
-- `daily_run.sh` : daily automation script
+- `daily_run.sh` : example maintenance script
 - `setup.sh` : bootstrap script
 
 ## Quick Start
@@ -29,27 +33,22 @@ python -m pip install -r requirements.txt
 
 python kb_ops.py status
 python kb_ops.py rebuild --full
-python kb_ops.py graph rebuild
-python kb_ops.py search "Claude pricing"
+python query_live_kb.py "What changed this week?"
 ```
 
 ## Core Commands
 
 ```bash
-# Process digests
+# Digest processing
 python kb_ops.py process
-python kb_ops.py process intelligence-kb/digests/incoming/2026-03-07.md
-python kb_ops.py process --quality
-python kb_ops.py process --verify
+python kb_ops.py process project-kb/digests/incoming/2026-03-07.md
 
 # Search
 python kb_ops.py search "inference cost race"
-python kb_ops.py search "labs competing with OpenAI" --graph
+python query_live_kb.py "What should the operator read next?"
 
-# Graph
+# Optional graph
 python kb_ops.py graph rebuild
-python kb_ops.py graph connections anthropic
-python kb_ops.py graph lineage "claude sonnet 4"
 python kb_ops.py graph anomalies
 
 # Maintenance
@@ -57,22 +56,11 @@ python kb_ops.py validate
 python kb_ops.py decay --report
 python kb_ops.py decay --apply
 python kb_ops.py status
-
-# Reports
-python kb_ops.py report weekly
-python kb_ops.py report models
-python kb_ops.py report themes
-```
-
-## Testing
-
-```bash
-source .venv/bin/activate
-python -m pytest tests -q
 ```
 
 ## Notes
 
-- Requires `OPENROUTER_API_KEY` for live embeddings and LLM extraction.
-- Data outputs are written under `intelligence-kb/`.
-- Runtime data, reports, logs, and indexes are intentionally excluded from this public export.
+- Keep the canonical KB separate from generated indexes and logs.
+- Keep provider credentials and delivery adapters outside the public template.
+- Use graph only when your canonical KB carries stable relation structure.
+- The workspace templates include deterministic examples for daily pulse rendering and KB front-page generation.

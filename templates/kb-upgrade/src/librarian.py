@@ -34,12 +34,12 @@ logger = logging.getLogger(__name__)
 
 class LibrarianRunner:
     MODELS = {
-        "fast": "deepseek/deepseek-chat-v3-0324",
-        "quality": "moonshotai/kimi-k2.5",
+        "fast": "provider/fast-synthesis-model",
+        "quality": "provider/high-quality-synthesis-model",
     }
     PRICING = {
-        "deepseek/deepseek-chat-v3-0324": {"in": 0.25, "out": 1.20},
-        "moonshotai/kimi-k2.5": {"in": 0.45, "out": 2.20},
+        "provider/fast-synthesis-model": {"in": 0.25, "out": 1.20},
+        "provider/high-quality-synthesis-model": {"in": 0.45, "out": 2.20},
     }
 
     def __init__(self, kb_root: Path, api_key: Optional[str] = None):
@@ -220,18 +220,18 @@ class LibrarianRunner:
             )
 
         new_entities: List[Dict[str, Any]] = []
-        if "moonshot ai" in lc and "moonshot ai" not in known_set:
+        if "example lab" in lc and "example lab" not in known_set:
             new_entities.append(
                 {
-                    "name": "Moonshot AI",
+                    "name": "Example Lab",
                     "type": "lab",
-                    "aliases": ["moonshot"],
+                    "aliases": ["example-lab"],
                     "summary": "AI lab identified from digest during offline fallback extraction.",
                     "sector_tags": ["frontier-models"],
                     "signals": [
                         {
                             "type": "model_release",
-                            "value": "Moonshot AI mentioned with model release activity in digest.",
+                            "value": "Example Lab mentioned with model release activity in digest.",
                             "date": today_iso(),
                             "confidence": "low",
                             "confidence_reasoning": "Offline fallback parsing; no model validation.",
@@ -243,18 +243,18 @@ class LibrarianRunner:
                     "person_details": None,
                 }
             )
-        if "kimi k2.5" in lc and "kimi k2.5" not in known_set:
+        if "examplemodel 2.5" in lc and "examplemodel 2.5" not in known_set:
             new_entities.append(
                 {
-                    "name": "Kimi K2.5",
+                    "name": "ExampleModel 2.5",
                     "type": "model",
-                    "aliases": ["kimi-k2.5"],
+                    "aliases": ["examplemodel-2.5"],
                     "summary": "Model extracted from digest using offline fallback mode.",
                     "sector_tags": ["frontier-models"],
                     "signals": [
                         {
                             "type": "model_release",
-                            "value": "Kimi K2.5 referenced as released in digest.",
+                            "value": "ExampleModel 2.5 referenced as released in digest.",
                             "date": today_iso(),
                             "confidence": "low",
                             "confidence_reasoning": "Offline fallback parsing; details may need review.",
@@ -263,8 +263,8 @@ class LibrarianRunner:
                     ],
                     "relations": [],
                     "model_details": {
-                        "family": "Kimi",
-                        "version": "K2.5",
+                        "family": "ExampleModel",
+                        "version": "2.5",
                         "release_date": today_iso(),
                         "parameter_count": None,
                         "context_window": None,

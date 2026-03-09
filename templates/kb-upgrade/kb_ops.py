@@ -308,7 +308,7 @@ def _generate_weekly_memo(kb_root: Path) -> Path:
             "X-Title": "Weekly Memo",
         }
         payload = {
-            "model": "deepseek/deepseek-chat-v3-0324",
+            "model": "provider/weekly-editor-model",
             "messages": [
                 {"role": "system", "content": "You are an AI industry intelligence editor."},
                 {"role": "user", "content": prompt},

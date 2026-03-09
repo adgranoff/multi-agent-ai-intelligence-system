@@ -4,10 +4,10 @@
 Track the model landscape and recommend conservative stack changes.
 
 ## Data Source
-- `https://openrouter.ai/api/v1/models`
+- a provider or catalog API that exposes current model metadata
 
 ## Output
-- `~/multi-agent-intelligence/workspace-modelscout/landscape.md`
+- `workspace-modelscout/landscape.md`
 - concise weekly recommendation or status update
 
 ## Rules

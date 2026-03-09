@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""OpenRouter embedding client with batching, retries, and cache."""
+"""Hosted embedding client with batching, retries, and cache."""
 
 import hashlib
 import math
@@ -51,7 +51,7 @@ class Embedder:
     def _request_embeddings(self, texts: List[str], retry: int = 0) -> Tuple[List[List[float]], int]:
         key = self.api_key
         if not key:
-            raise ValueError("OPENROUTER_API_KEY not set")
+            raise ValueError("EMBEDDING_PROVIDER_KEY not set")
 
         headers = {
             "Authorization": f"Bearer {key}",
@@ -74,7 +74,7 @@ class Embedder:
         except requests.HTTPError as exc:
             response = getattr(exc, "response", None)
             if response is not None and response.status_code == 404 and "No endpoints found matching your data policy" in response.text:
-                # Explicit deterministic fallback for strict OpenRouter privacy policy environments.
+                # Explicit deterministic fallback for strict remote-embedding policy environments.
                 vectors = [self._local_embedding(t) for t in texts]
                 approx_tokens = sum(max(1, len(t) // 4) for t in texts)
                 return vectors, approx_tokens

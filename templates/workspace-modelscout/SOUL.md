@@ -16,7 +16,7 @@ SOURCE RULE:
 - use the JSON models API, not HTML rankings pages, as the primary input
 
 DELIVERABLES:
-- update `~/multi-agent-intelligence/workspace-modelscout/landscape.md`
+- update `workspace-modelscout/landscape.md`
 - produce a short recommendation focused on stack impact
 
 DO NOT:
