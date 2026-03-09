@@ -143,7 +143,7 @@ class LibrarianRunner:
         headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
-            "HTTP-Referer": "https://openclaw.local",
+            "HTTP-Referer": "https://example.invalid",
             "X-Title": "OpenClaw Librarian",
         }
         try:

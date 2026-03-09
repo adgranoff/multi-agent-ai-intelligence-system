@@ -130,7 +130,7 @@ reporting:
     enabled: true
     day_of_week: "sunday"
     time: "10:00"
-    timezone: "America/New_York"
+    timezone: "UTC"
   
   snapshots:
     enabled: true

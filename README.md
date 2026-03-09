@@ -78,6 +78,7 @@ That is the main differentiator of this system.
 - sanitized runtime files for agent boot order, role doctrine, and ops contracts
 - workflow-specific custom OpenClaw skills
 - sanitized KB engine code for embeddings, indexing, graphing, decay, validation, and operations
+- synthetic sample digest and entity files that demonstrate the schema without exposing live data
 - knowledge-base layout templates
 - architecture, cron, delivery, and KB documentation
 
@@ -140,6 +141,8 @@ skills/
 examples/
   .env.example
   schedule.md
+  sample-digest.md
+  sample-entity-lab.md
 ```
 
 ## End-To-End Flow

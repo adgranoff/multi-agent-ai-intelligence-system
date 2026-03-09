@@ -304,7 +304,7 @@ def _generate_weekly_memo(kb_root: Path) -> Path:
         headers = {
             "Authorization": f"Bearer {key}",
             "Content-Type": "application/json",
-            "HTTP-Referer": "https://openclaw.local",
+            "HTTP-Referer": "https://example.invalid",
             "X-Title": "OpenClaw Weekly Memo",
         }
         payload = {

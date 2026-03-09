@@ -14,3 +14,5 @@ This public subset intentionally excludes:
 This export includes sanitized code and templates for the KB engine, but not the live runtime data it produces.
 
 If you adapt this export for public release, keep all secrets local and regenerate examples with fake values.
+
+The sample entity and digest files in `examples/` use synthetic names, placeholder references, and illustrative facts only.

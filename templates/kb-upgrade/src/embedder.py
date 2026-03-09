@@ -56,7 +56,7 @@ class Embedder:
         headers = {
             "Authorization": f"Bearer {key}",
             "Content-Type": "application/json",
-            "HTTP-Referer": "https://openclaw.local",
+            "HTTP-Referer": "https://example.invalid",
             "X-Title": "OpenClaw KB",
         }
         payload = {"model": self.model, "input": texts}

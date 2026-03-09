@@ -8,6 +8,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from chunker import Chunker
 from common import dump_frontmatter, ensure_kb_dirs, parse_frontmatter
 from build_index import IndexBuilder
+from decay import ConfidenceDecay
 from graph_builder import GraphBuilder
 from graph_query import GraphQuery
 from merger import Merger
@@ -110,3 +111,23 @@ def test_graph_anomalies_command_runs(tmp_path: Path):
     GraphBuilder(kb).export()
     text = GraphQuery(kb).anomalies()
     assert "Contradictory relations" in text
+
+
+def test_confidence_decay_report_and_apply(tmp_path: Path):
+    kb = tmp_path / "openclaw-kb"
+    ensure_kb_dirs(kb)
+    entity_path = kb / "entities" / "models" / "example-model.md"
+    _seed_entity(entity_path, "Example Model", "model")
+
+    fm, body = parse_frontmatter(entity_path.read_text(encoding="utf-8"))
+    fm["confidence"] = 0.9
+    fm["last_confirmed"] = "2026-01-01"
+    entity_path.write_text(dump_frontmatter(fm, body), encoding="utf-8")
+
+    result = ConfidenceDecay(kb).run(apply_changes=False, as_of="2026-03-07")
+    assert result["changed"] == 1
+    assert result["entities"][0]["new_confidence"] < result["entities"][0]["old_confidence"]
+
+    ConfidenceDecay(kb).run(apply_changes=True, as_of="2026-03-07")
+    updated, _ = parse_frontmatter(entity_path.read_text(encoding="utf-8"))
+    assert updated["confidence"] < 0.9

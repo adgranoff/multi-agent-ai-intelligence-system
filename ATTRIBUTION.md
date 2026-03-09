@@ -7,9 +7,8 @@ This repository is an overlay for a specific OpenClaw workflow, not a repackagin
 This system is designed to run on top of upstream OpenClaw:
 
 - GitHub: `https://github.com/openclaw/openclaw`
-- Local package inspected during preparation: installed `openclaw` package on the build machine
 
-The upstream OpenClaw package installed on this machine declares the `MIT` license in:
+The upstream OpenClaw repository declares the `MIT` license in:
 
 - `package.json`
 - `LICENSE`
