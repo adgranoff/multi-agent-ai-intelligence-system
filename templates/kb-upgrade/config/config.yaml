@@ -1,0 +1,177 @@
+# Knowledge Base Configuration
+# Central system configuration
+
+system:
+  name: "Knowledge Base"
+  version: "2.0.0"
+  environment: "production"
+
+# ============================================
+# PATHS
+# ============================================
+paths:
+  base_dir: "./intelligence-kb"
+  entities: "entities"
+  digests: "digests"
+  indexes: "indexes"
+  reports: "reports"
+  logs: "logs"
+  config: "config"
+
+# ============================================
+# DIGEST PROCESSING
+# ============================================
+digest_processing:
+  watch_directory: "digests/incoming"
+  processed_directory: "digests/processed"
+  archive_directory: "digests/archive"
+  
+  auto_process: true
+  process_interval_minutes: 15
+  
+  # What to do with processed digests
+  retention:
+    keep_in_processed_days: 30
+    archive_after_days: 90
+    delete_after_days: 365
+  
+  # Librarian behavior
+  librarian:
+    default_confidence: 0.7
+    confidence_boost_for_multi_source: 0.15
+    max_confidence: 0.95
+    
+    # Signal extraction
+    create_signals_as_draft: false
+    auto_resolve_contradictions: false
+    
+    # Relation handling
+    infer_relations_from_text: true
+    confirm_relations_before_saving: false
+
+# ============================================
+# EMBEDDING CONFIGURATION
+# ============================================
+embeddings:
+  enabled: true
+  provider: "external-api"
+  
+  external_api:
+    model: "text-embedding-small"
+    api_key_env: "EMBEDDING_PROVIDER_KEY"
+    max_retries: 3
+    retry_delay_seconds: 2
+    timeout_seconds: 30
+  
+  # Alternative local option (requires ollama)
+  local:
+    enabled: false
+    endpoint: "https://example.invalid/embeddings"
+    model: "local-embedding-model"
+  
+  chunking:
+    chunk_size_tokens: 500
+    chunk_overlap_tokens: 50
+    max_chunks_per_entity: 20
+  
+  index:
+    backend: "faiss"
+    faiss:
+      index_type: "IndexFlatIP"  # Inner product for cosine similarity
+      normalize_embeddings: true
+    
+    persistence:
+      directory: "indexes/vector-store"
+      save_on_update: true
+
+# ============================================
+# CONFIDENCE DECAY
+# ============================================
+confidence_decay:
+  enabled: true
+  rules:
+    - name: "default"
+      condition: "daily"  # Check daily
+      decay_rate: 0.95    # Multiply by 0.95 per day without confirmation
+      min_confidence: 0.1
+      grace_period_days: 7
+      
+    - name: "fast_decay"
+      condition: "entity_type == 'opportunity'"
+      decay_rate: 0.90
+      min_confidence: 0.1
+      grace_period_days: 3
+      
+    - name: "slow_decay"
+      condition: "entity_type == 'theme'"
+      decay_rate: 0.97
+      min_confidence: 0.2
+      grace_period_days: 14
+
+# ============================================
+# RELATION GRAPH
+# ============================================
+relations:
+  enabled: true
+  validation:
+    check_orphaned: true
+    warn_bidirectional_asymmetric: true
+  
+  auto_infer:
+    enabled: true
+    from_signals: true
+    from_text_analysis: true
+
+# ============================================
+# REPORTING
+# ============================================
+reporting:
+  weekly_memo:
+    enabled: true
+    day_of_week: "sunday"
+    time: "10:00"
+    timezone: "UTC"
+  
+  snapshots:
+    enabled: true
+    frequency: "weekly"
+    include_model_comparisons: true
+    include_competitive_landscape: true
+    
+  cost_tracking:
+    enabled: true
+    log_file: "logs/api-usage.log"
+    alert_threshold_monthly: 100.00
+
+# ============================================
+# NOTIFICATIONS
+# ============================================
+notifications:
+  on_digest_processed:
+    enabled: true
+    channels:
+      - webhook
+    
+  on_conflict_detected:
+    enabled: true
+    channels:
+      - webhook
+      - log
+    
+  on_validation_failure:
+    enabled: true
+    severity_threshold: "warning"
+    channels:
+      - webhook
+      - log
+
+# ============================================
+# BACKUP
+# ============================================
+backup:
+  enabled: true
+  frequency: "daily"
+  time: "03:00"
+  retention_count: 7
+  destination: "./backups/kb"
+  compress: true

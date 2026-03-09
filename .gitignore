@@ -1,0 +1,35 @@
+# Local environment
+.env
+.env.*
+!examples/.env.example
+.python-version
+.venv/
+venv/
+
+# Python caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# macOS
+.DS_Store
+
+# Runtime KB outputs
+intelligence-kb/
+knowledge-base/
+backups/
+logs/
+reports/
+indexes/
+digests/incoming/
+digests/processed/
+digests/archive/
+
+# Generated artifacts
+*.faiss
+*.jsonl
+*.log
