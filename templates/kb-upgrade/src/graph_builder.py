@@ -176,7 +176,7 @@ class GraphBuilder:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Build OpenClaw KB graph")
+    parser = argparse.ArgumentParser(description="Build the knowledge base graph")
     parser.add_argument("--kb-path", default=str(default_kb_root()))
     parser.add_argument("--rebuild", action="store_true", help="Full rebuild")
     parser.add_argument("--update", action="store_true", help="Incremental update (currently same as rebuild)")

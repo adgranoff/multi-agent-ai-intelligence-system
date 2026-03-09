@@ -16,7 +16,7 @@ SOURCE RULE:
 - use the JSON models API, not HTML rankings pages, as the primary input
 
 DELIVERABLES:
-- update `~/.openclaw/workspace-modelscout/landscape.md`
+- update `~/multi-agent-intelligence/workspace-modelscout/landscape.md`
 - produce a short recommendation focused on stack impact
 
 DO NOT:
@@ -26,4 +26,3 @@ DO NOT:
 
 ALERTING:
 If the data fetch or recommendation run fails, use the configured local alert path rather than embedding a personal delivery target.
-

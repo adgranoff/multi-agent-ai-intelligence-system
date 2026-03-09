@@ -1,8 +1,8 @@
-# OpenClaw KB Configuration
+# Knowledge Base Configuration
 # Central system configuration
 
 system:
-  name: "OpenClaw Knowledge Base"
+  name: "Knowledge Base"
   version: "2.0.0"
   environment: "production"
 
@@ -10,7 +10,7 @@ system:
 # PATHS
 # ============================================
 paths:
-  base_dir: "./openclaw-kb"
+  base_dir: "./intelligence-kb"
   entities: "entities"
   digests: "digests"
   indexes: "indexes"

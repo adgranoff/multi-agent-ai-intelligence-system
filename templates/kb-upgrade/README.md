@@ -1,10 +1,10 @@
-# OpenClaw Enhanced Knowledge Base Template
+# Enhanced Knowledge Base Template
 
 Sanitized KB engine template for the Collector -> Sentinel -> Librarian workflow.
 
 ## What It Does
 
-- Ingests Sentinel digests from `openclaw-kb/digests/incoming/`
+- Ingests Sentinel digests from `intelligence-kb/digests/incoming/`
 - Uses Librarian extraction + merger to update structured entities/themes
 - Maintains semantic index (FAISS + embedding cache)
 - Maintains relationship graph (NetworkX + JSON export)
@@ -12,10 +12,10 @@ Sanitized KB engine template for the Collector -> Sentinel -> Librarian workflow
 
 ## Template Layout
 
-- `openclaw-kb/` : data plane (entities, themes, digests, indexes, reports, logs, config)
+- `intelligence-kb/` : data plane (entities, themes, digests, indexes, reports, logs, config)
 - `src/` : implementation modules
 - `tests/` : regression coverage for indexing, graph, and fallback behavior
-- `openclaw.py` : master operations CLI
+- `kb_ops.py` : master operations CLI
 - `validate_schema.py` : schema validator
 - `daily_run.sh` : daily automation script
 - `setup.sh` : bootstrap script
@@ -27,41 +27,41 @@ python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
 
-python openclaw.py status
-python openclaw.py rebuild --full
-python openclaw.py graph rebuild
-python openclaw.py search "Claude pricing"
+python kb_ops.py status
+python kb_ops.py rebuild --full
+python kb_ops.py graph rebuild
+python kb_ops.py search "Claude pricing"
 ```
 
 ## Core Commands
 
 ```bash
 # Process digests
-python openclaw.py process
-python openclaw.py process openclaw-kb/digests/incoming/2026-03-07.md
-python openclaw.py process --quality
-python openclaw.py process --verify
+python kb_ops.py process
+python kb_ops.py process intelligence-kb/digests/incoming/2026-03-07.md
+python kb_ops.py process --quality
+python kb_ops.py process --verify
 
 # Search
-python openclaw.py search "inference cost race"
-python openclaw.py search "labs competing with OpenAI" --graph
+python kb_ops.py search "inference cost race"
+python kb_ops.py search "labs competing with OpenAI" --graph
 
 # Graph
-python openclaw.py graph rebuild
-python openclaw.py graph connections anthropic
-python openclaw.py graph lineage "claude sonnet 4"
-python openclaw.py graph anomalies
+python kb_ops.py graph rebuild
+python kb_ops.py graph connections anthropic
+python kb_ops.py graph lineage "claude sonnet 4"
+python kb_ops.py graph anomalies
 
 # Maintenance
-python openclaw.py validate
-python openclaw.py decay --report
-python openclaw.py decay --apply
-python openclaw.py status
+python kb_ops.py validate
+python kb_ops.py decay --report
+python kb_ops.py decay --apply
+python kb_ops.py status
 
 # Reports
-python openclaw.py report weekly
-python openclaw.py report models
-python openclaw.py report themes
+python kb_ops.py report weekly
+python kb_ops.py report models
+python kb_ops.py report themes
 ```
 
 ## Testing
@@ -74,5 +74,5 @@ python -m pytest tests -q
 ## Notes
 
 - Requires `OPENROUTER_API_KEY` for live embeddings and LLM extraction.
-- Data outputs are written under `openclaw-kb/`.
+- Data outputs are written under `intelligence-kb/`.
 - Runtime data, reports, logs, and indexes are intentionally excluded from this public export.

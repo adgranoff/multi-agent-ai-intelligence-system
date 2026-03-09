@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Semantic search and entity-context retrieval for OpenClaw KB."""
+"""Semantic search and entity-context retrieval for the knowledge base."""
 
 import argparse
 import json
@@ -138,7 +138,7 @@ KBSearcher = KBSearch  # Backward compatibility
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Search OpenClaw KB")
+    parser = argparse.ArgumentParser(description="Search the knowledge base")
     parser.add_argument("query", nargs="?", help="query string")
     parser.add_argument("--entity", nargs="+", help="entity names for structured context")
     parser.add_argument("--include-prose", action="store_true", help="include prose for entity mode")

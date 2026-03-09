@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""FAISS index manager for OpenClaw KB."""
+"""FAISS index manager for the knowledge base."""
 
 from dataclasses import dataclass
 from pathlib import Path

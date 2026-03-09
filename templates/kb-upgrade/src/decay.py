@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Confidence decay engine for OpenClaw KB entities."""
+"""Confidence decay engine for knowledge base entities."""
 
 from __future__ import annotations
 

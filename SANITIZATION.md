@@ -3,7 +3,7 @@
 This public subset intentionally excludes:
 
 - secrets and credentials
-- real OpenClaw config files
+- real platform config files
 - personal reminders and memory files
 - session transcripts and cron run history
 - actual private knowledge-base contents

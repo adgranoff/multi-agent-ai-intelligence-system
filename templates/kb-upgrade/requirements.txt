@@ -1,4 +1,4 @@
-# OpenClaw KB Semantic Search Requirements
+# Knowledge Base Semantic Search Requirements
 # Python 3.10+
 
 # Core dependencies

@@ -1,10 +1,14 @@
-# OpenClaw Multi-Agent AI Intelligence System
+# Multi-Agent AI Intelligence System
 
-OpenClaw Multi-Agent AI Intelligence System is a narrow, production-oriented overlay for one specific workflow:
+Multi-Agent AI Intelligence System is a narrow, production-oriented template pack for one specific workflow:
 
 `Collector -> Sentinel -> advanced knowledge base`
 
-It is not a general OpenClaw starter kit. It excludes personal assistants, messaging automations, device control, unrelated agents, and bundled upstream code. This repo exists to show how to run a repeatable AI intelligence pipeline that turns daily source noise into durable strategic memory.
+It is not a general-purpose agent starter kit. It excludes personal assistants, device control, unrelated automations, and platform-specific runtime code. This repo exists to show how to run a repeatable AI intelligence pipeline that turns daily source noise into durable strategic memory.
+
+## Best Use
+
+Use this repo as an input pack for Claude Code, Codex, or another coding agent. Give the agent this repository plus your desired environment, then have it adapt the templates, paths, scheduler, delivery hooks, and secrets model to your setup.
 
 ## What This System Actually Does
 
@@ -76,7 +80,7 @@ That is the main differentiator of this system.
 
 - sanitized templates for `workspace-collector`, `workspace-sentinel`, and `workspace-librarian`
 - sanitized runtime files for agent boot order, role doctrine, and ops contracts
-- workflow-specific custom OpenClaw skills
+- workflow-specific skills and runbooks
 - sanitized KB engine code for embeddings, indexing, graphing, decay, validation, and operations
 - synthetic sample digest and entity files that demonstrate the schema without exposing live data
 - knowledge-base layout templates
@@ -84,7 +88,7 @@ That is the main differentiator of this system.
 
 ## Excluded On Purpose
 
-- bundled OpenClaw package code
+- vendor-specific platform runtime code
 - unrelated agents and automations
 - personal memory, session history, and run logs
 - secrets, tokens, and local config values
@@ -127,17 +131,17 @@ templates/
     config/
     src/
     tests/
-    openclaw.py
+    kb_ops.py
     validate_schema.py
     build_index.py
     daily_run.sh
     setup.sh
 skills/
-  openclaw-cron-runbook/
-  openclaw-delivery-debugging/
-  openclaw-wrapper-hardening/
-  openclaw-digest-pipeline/
-  openclaw-librarian-kb-curation/
+  scheduler-runbook/
+  delivery-debugging/
+  wrapper-hardening/
+  digest-pipeline/
+  librarian-kb-curation/
 examples/
   .env.example
   schedule.md
@@ -196,27 +200,27 @@ The KB runtime is the retrieval and maintenance plane behind Librarian:
 - `src/graph_builder.py` and `src/graph_query.py` maintain and query the relation graph
 - `src/combined_search.py` merges graph evidence with semantic evidence
 - `src/decay.py` finds stale or low-confidence entities and can apply decay updates
-- `openclaw.py` provides a single operational CLI over the whole KB engine
+- `kb_ops.py` provides a single operational CLI over the whole KB engine
 
-## Custom Skills Included
+## Workflow Skills Included
 
-These skills teach OpenClaw how to operate this workflow reliably:
+These skills document how to operate this workflow reliably:
 
-- `openclaw-cron-runbook`
-- `openclaw-delivery-debugging`
-- `openclaw-wrapper-hardening`
-- `openclaw-digest-pipeline`
-- `openclaw-librarian-kb-curation`
+- `scheduler-runbook`
+- `delivery-debugging`
+- `wrapper-hardening`
+- `digest-pipeline`
+- `librarian-kb-curation`
 
-They are custom skills, not bundled-package edits, so they survive OpenClaw upgrades when stored in `~/.openclaw/skills` or workspace-local `skills/` directories.
+They are plain workflow skills, not platform patches, so they can be adapted to whatever agent framework or local automation setup you use.
 
 ## How To Use This Repo
 
-1. Install upstream OpenClaw separately.
-2. Copy the Collector, Sentinel, Librarian, KB, and skill templates into your own `~/.openclaw` layout.
-3. Add your own fetchers, model settings, digests, and delivery endpoints.
+1. Copy the Collector, Sentinel, Librarian, KB, and skill templates into your own workspace layout.
+2. Adjust paths, model settings, digests, and delivery hooks for your environment.
+3. Add your own fetchers and transport integrations.
 4. Keep every secret in local-only config.
-5. Treat this repo as the workflow overlay, not as a replacement for upstream OpenClaw.
+5. Treat this repo as a portable workflow template, not a complete platform distribution.
 
 Start with [docs/getting-started.md](docs/getting-started.md) if you want a concrete path from clone to first dry run.
 
@@ -225,7 +229,7 @@ Start with [docs/getting-started.md](docs/getting-started.md) if you want a conc
 1. Re-read [SANITIZATION.md](SANITIZATION.md).
 2. Confirm no digests, logs, indexes, or backups are present.
 3. Replace placeholder delivery targets and local paths with your own values.
-4. Keep upstream OpenClaw attribution via [ATTRIBUTION.md](ATTRIBUTION.md).
+4. Keep third-party notices aligned with the tools and libraries you add.
 
 ## Best Fit
 
@@ -239,4 +243,4 @@ This system fits operators who want:
 
 ## Attribution
 
-This repository is an overlay and workflow template built on top of upstream OpenClaw. It is not a fork of the full OpenClaw codebase.
+This repository is a platform-agnostic workflow template. It does not bundle any vendor runtime source code.

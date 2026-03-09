@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Shared utilities for OpenClaw KB modules."""
+"""Shared utilities for knowledge base modules."""
 
 import json
 import os
@@ -13,7 +13,7 @@ import yaml
 
 def default_kb_root() -> Path:
     """Return default KB root path."""
-    return Path.cwd() / "openclaw-kb"
+    return Path.cwd() / "intelligence-kb"
 
 
 def ensure_kb_dirs(kb_root: Path) -> None:

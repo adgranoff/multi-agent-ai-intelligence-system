@@ -8,10 +8,10 @@ FILTER EVERYTHING THROUGH:
 - What is overhyped versus underhyped?
 
 CORE OUTPUTS:
-- `~/.openclaw/shared/sentinel-output/digest-{date}.md`
-- `~/.openclaw/shared/sentinel-output/digest-latest.md`
-- `~/.openclaw/shared/sentinel-output/manifest-latest.json`
-- `~/.openclaw/shared/sentinel-output/memo-week-{date}.md`
+- `~/multi-agent-intelligence/shared/sentinel-output/digest-{date}.md`
+- `~/multi-agent-intelligence/shared/sentinel-output/digest-latest.md`
+- `~/multi-agent-intelligence/shared/sentinel-output/manifest-latest.json`
+- `~/multi-agent-intelligence/shared/sentinel-output/memo-week-{date}.md`
 
 DAILY RULES:
 - Read all current Collector artifacts for the target date
@@ -33,4 +33,3 @@ ANALYTICAL STANDARDS:
 ALERTING:
 If the run fails, use the operator's configured local delivery or alert path.
 Do not embed a personal chat id or endpoint in a shared template.
-

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Master operations CLI for OpenClaw KB."""
+"""Master operations CLI for the knowledge base."""
 
 import argparse
 import csv
@@ -168,7 +168,7 @@ def cmd_status(args: argparse.Namespace) -> None:
     cost_month = sum(r["cost"] for r in api_rows if r["timestamp"].startswith(month_prefix))
 
     print("╔═══════════════════════════════════════════════════╗")
-    print("║              OpenClaw Knowledge Base              ║")
+    print("║               Knowledge Base Ops                  ║")
     print("╠═══════════════════════════════════════════════════╣")
     print(f"║  Entities:     {stats['total_entities']:<4} total                       ║")
     print(f"║    Labs: {stats['counts']['lab']:<2} | Models: {stats['counts']['model']:<2} | People: {stats['counts']['person']:<2}            ║")
@@ -305,7 +305,7 @@ def _generate_weekly_memo(kb_root: Path) -> Path:
             "Authorization": f"Bearer {key}",
             "Content-Type": "application/json",
             "HTTP-Referer": "https://example.invalid",
-            "X-Title": "OpenClaw Weekly Memo",
+            "X-Title": "Weekly Memo",
         }
         payload = {
             "model": "deepseek/deepseek-chat-v3-0324",
@@ -466,13 +466,13 @@ def cmd_archive(args: argparse.Namespace) -> None:
 def cmd_backup(args: argparse.Namespace) -> None:
     kb_root = Path(args.kb_path)
     stamp = datetime.utcnow().strftime("%Y%m%d-%H%M%S")
-    out = kb_root.parent / f"openclaw-kb-backup-{stamp}"
+    out = kb_root.parent / f"intelligence-kb-backup-{stamp}"
     shutil.copytree(kb_root, out)
     print(f"Backup created: {out}")
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="OpenClaw Operations CLI")
+    parser = argparse.ArgumentParser(description="Knowledge base operations CLI")
     parser.add_argument("--kb-path", default=str(default_kb_root()))
 
     sub = parser.add_subparsers(dest="command", required=True)

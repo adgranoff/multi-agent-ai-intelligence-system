@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate OpenClaw KB markdown frontmatter schema."""
+"""Validate knowledge base markdown frontmatter schema."""
 
 import argparse
 import re
@@ -163,7 +163,7 @@ def validate_file(path: Path, known_entities: Set[str], digest_files: Set[str], 
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Validate OpenClaw KB schema")
+    parser = argparse.ArgumentParser(description="Validate the knowledge base schema")
     parser.add_argument("--kb-path", default=str(default_kb_root()))
     args = parser.parse_args()
 

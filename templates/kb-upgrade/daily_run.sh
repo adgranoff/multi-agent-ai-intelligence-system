@@ -5,17 +5,15 @@ ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$ROOT_DIR"
 
 PYTHON_BIN="${PYTHON_BIN:-python3}"
-KB_PATH="${KB_PATH:-./openclaw-kb}"
-OPENCLAW_BIN="${OPENCLAW_BIN:-openclaw}"
-SEND_REPORTS_TELEGRAM="${SEND_REPORTS_TELEGRAM:-0}"
-TELEGRAM_CHANNEL="${TELEGRAM_CHANNEL:-telegram}"
-TELEGRAM_TARGET="${TELEGRAM_TARGET:-CHANGE_ME}"
+KB_PATH="${KB_PATH:-./intelligence-kb}"
+SEND_REPORTS_HOOK="${SEND_REPORTS_HOOK:-0}"
+REPORT_DELIVERY_HOOK="${REPORT_DELIVERY_HOOK:-}"
 
-send_report_to_telegram() {
+send_report() {
   local report_path="$1"
   local report_label="$2"
 
-  if [ "$SEND_REPORTS_TELEGRAM" != "1" ]; then
+  if [ "$SEND_REPORTS_HOOK" != "1" ]; then
     return 0
   fi
 
@@ -24,43 +22,37 @@ send_report_to_telegram() {
     return 1
   fi
 
-  "$OPENCLAW_BIN" message send \
-    --channel "$TELEGRAM_CHANNEL" \
-    --target "$TELEGRAM_TARGET" \
-    --message "OpenClaw report ready: $report_label ($(date +%Y-%m-%d)). Sending file now." \
-    >/dev/null
+  if [ -z "$REPORT_DELIVERY_HOOK" ] || [ ! -x "$REPORT_DELIVERY_HOOK" ]; then
+    echo "report-send: REPORT_DELIVERY_HOOK is not set to an executable file" >&2
+    return 1
+  fi
 
-  "$OPENCLAW_BIN" message send \
-    --channel "$TELEGRAM_CHANNEL" \
-    --target "$TELEGRAM_TARGET" \
-    --message "Attached: $(basename "$report_path")" \
-    --media "$report_path" \
-    >/dev/null
+  "$REPORT_DELIVERY_HOOK" "$report_path" "$report_label"
 }
 
-$PYTHON_BIN openclaw.py --kb-path "$KB_PATH" process --fast
-$PYTHON_BIN openclaw.py --kb-path "$KB_PATH" graph rebuild
-$PYTHON_BIN openclaw.py --kb-path "$KB_PATH" graph anomalies >> "$KB_PATH/logs/$(date +%Y-%m-%d).log"
+$PYTHON_BIN kb_ops.py --kb-path "$KB_PATH" process --fast
+$PYTHON_BIN kb_ops.py --kb-path "$KB_PATH" graph rebuild
+$PYTHON_BIN kb_ops.py --kb-path "$KB_PATH" graph anomalies >> "$KB_PATH/logs/$(date +%Y-%m-%d).log"
 
 if [ "${FORCE_WEEKLY:-0}" = "1" ] || [ "$(date +%u)" = "7" ]; then
-  $PYTHON_BIN openclaw.py --kb-path "$KB_PATH" decay --apply
-  weekly_out="$($PYTHON_BIN openclaw.py --kb-path "$KB_PATH" report weekly)"
+  $PYTHON_BIN kb_ops.py --kb-path "$KB_PATH" decay --apply
+  weekly_out="$($PYTHON_BIN kb_ops.py --kb-path "$KB_PATH" report weekly)"
   echo "$weekly_out"
   weekly_path="$(printf '%s\n' "$weekly_out" | sed -n 's/^Report saved: //p' | tail -n1)"
-  send_report_to_telegram "$weekly_path" "weekly memo"
+  send_report "$weekly_path" "weekly memo"
 
-  models_out="$($PYTHON_BIN openclaw.py --kb-path "$KB_PATH" report models)"
+  models_out="$($PYTHON_BIN kb_ops.py --kb-path "$KB_PATH" report models)"
   echo "$models_out"
   models_path="$(printf '%s\n' "$models_out" | sed -n 's/^Report saved: //p' | tail -n1)"
-  send_report_to_telegram "$models_path" "model snapshot"
+  send_report "$models_path" "model snapshot"
 
-  themes_out="$($PYTHON_BIN openclaw.py --kb-path "$KB_PATH" report themes)"
+  themes_out="$($PYTHON_BIN kb_ops.py --kb-path "$KB_PATH" report themes)"
   echo "$themes_out"
   themes_path="$(printf '%s\n' "$themes_out" | sed -n 's/^Report saved: //p' | tail -n1)"
-  send_report_to_telegram "$themes_path" "theme snapshot"
+  send_report "$themes_path" "theme snapshot"
 
-  $PYTHON_BIN openclaw.py --kb-path "$KB_PATH" backup
+  $PYTHON_BIN kb_ops.py --kb-path "$KB_PATH" backup
 fi
 
 find "$KB_PATH/digests/processed" -name "*.md" -mtime +30 -exec mv {} "$KB_PATH/digests/archive/" \;
-$PYTHON_BIN openclaw.py --kb-path "$KB_PATH" status >> "$KB_PATH/logs/$(date +%Y-%m-%d).log"
+$PYTHON_BIN kb_ops.py --kb-path "$KB_PATH" status >> "$KB_PATH/logs/$(date +%Y-%m-%d).log"

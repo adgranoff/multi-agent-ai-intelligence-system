@@ -101,7 +101,7 @@ The public template includes the KB engine under `templates/kb-upgrade/`.
 
 Key parts:
 
-- `openclaw.py`
+- `kb_ops.py`
   One CLI for process, search, graph, decay, validation, status, reports, and backup flows.
 - `src/`
   Implementation modules for extraction, merging, indexing, graphing, search, and reporting.

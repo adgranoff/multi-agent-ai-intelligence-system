@@ -35,7 +35,7 @@ def _seed_entity(path: Path, entity: str, etype: str) -> None:
 
 
 def test_chunker_structured_chunk(tmp_path: Path):
-    kb = tmp_path / "openclaw-kb"
+    kb = tmp_path / "intelligence-kb"
     ensure_kb_dirs(kb)
     entity_path = kb / "entities" / "labs" / "anthropic.md"
     _seed_entity(entity_path, "Anthropic", "lab")
@@ -47,7 +47,7 @@ def test_chunker_structured_chunk(tmp_path: Path):
 
 
 def test_merger_path_and_signal_ids(tmp_path: Path):
-    kb = tmp_path / "openclaw-kb"
+    kb = tmp_path / "intelligence-kb"
     ensure_kb_dirs(kb)
     _seed_entity(kb / "entities" / "labs" / "anthropic.md", "Anthropic", "lab")
 
@@ -65,7 +65,7 @@ def test_merger_path_and_signal_ids(tmp_path: Path):
 
 
 def test_build_index_without_network_when_cached(monkeypatch, tmp_path: Path):
-    kb = tmp_path / "openclaw-kb"
+    kb = tmp_path / "intelligence-kb"
     ensure_kb_dirs(kb)
     _seed_entity(kb / "entities" / "labs" / "anthropic.md", "Anthropic", "lab")
 
@@ -97,7 +97,7 @@ def test_build_index_without_network_when_cached(monkeypatch, tmp_path: Path):
 
 
 def test_graph_anomalies_command_runs(tmp_path: Path):
-    kb = tmp_path / "openclaw-kb"
+    kb = tmp_path / "intelligence-kb"
     ensure_kb_dirs(kb)
     _seed_entity(kb / "entities" / "labs" / "anthropic.md", "Anthropic", "lab")
     _seed_entity(kb / "entities" / "labs" / "openai.md", "OpenAI", "lab")
@@ -114,7 +114,7 @@ def test_graph_anomalies_command_runs(tmp_path: Path):
 
 
 def test_confidence_decay_report_and_apply(tmp_path: Path):
-    kb = tmp_path / "openclaw-kb"
+    kb = tmp_path / "intelligence-kb"
     ensure_kb_dirs(kb)
     entity_path = kb / "entities" / "models" / "example-model.md"
     _seed_entity(entity_path, "Example Model", "model")

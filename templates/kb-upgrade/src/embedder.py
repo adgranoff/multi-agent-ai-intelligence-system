@@ -57,7 +57,7 @@ class Embedder:
             "Authorization": f"Bearer {key}",
             "Content-Type": "application/json",
             "HTTP-Referer": "https://example.invalid",
-            "X-Title": "OpenClaw KB",
+            "X-Title": "Knowledge Base",
         }
         payload = {"model": self.model, "input": texts}
 

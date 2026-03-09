@@ -25,10 +25,10 @@ source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 
-mkdir -p openclaw-kb/{entities/{labs,models,people,companies,investors,regulators},themes,opportunities,digests/{incoming,processed,archive},indexes/vector-store,reports/{weekly,snapshots},config,logs}
+mkdir -p intelligence-kb/{entities/{labs,models,people,companies,investors,regulators},themes,opportunities,digests/{incoming,processed,archive},indexes/vector-store,reports/{weekly,snapshots},config,logs}
 
 echo "If needed, add OPENROUTER_API_KEY to .env"
-python validate_schema.py --kb-path ./openclaw-kb || true
+python validate_schema.py --kb-path ./intelligence-kb || true
 
-echo "Setup complete. Sentinel should deposit digests to openclaw-kb/digests/incoming/."
-echo "Run './.venv/bin/python openclaw.py --kb-path ./openclaw-kb process' to start."
+echo "Setup complete. Sentinel should deposit digests to intelligence-kb/digests/incoming/."
+echo "Run './.venv/bin/python kb_ops.py --kb-path ./intelligence-kb process' to start."

@@ -1,33 +1,17 @@
 # Attribution
 
-This repository is an overlay for a specific OpenClaw workflow, not a repackaging of the full upstream project.
-
-## Upstream Dependency
-
-This system is designed to run on top of upstream OpenClaw:
-
-- GitHub: `https://github.com/openclaw/openclaw`
-
-The upstream OpenClaw repository declares the `MIT` license in:
-
-- `package.json`
-- `LICENSE`
+This public repository contains original workflow templates plus references to third-party libraries and APIs declared in the codebase.
 
 ## What This Repo Contains
 
-This public repository contains only the workflow overlay:
-
 - Collector, Sentinel, and Librarian workspace templates
-- custom skills for this workflow
+- workflow skills and runbooks
 - sanitized advanced knowledge-base code and config templates
 - documentation for the AI intelligence pipeline
 
 ## What This Repo Does Not Contain
 
-This public repository does not include:
-
-- the bundled OpenClaw package code
-- OpenClaw's full default feature set
+- vendor-specific platform runtime code
 - private runtime data, secrets, or session history
 - generated indexes, logs, or delivery endpoints
 
@@ -35,12 +19,10 @@ This public repository does not include:
 
 Users should:
 
-1. install upstream OpenClaw separately
-2. use this repository as a workflow overlay and template pack
-3. keep their own secrets and runtime data outside version control
+1. adapt the templates to their own automation environment
+2. keep secrets and runtime data outside version control
+3. preserve license notices for any third-party code they add or redistribute
 
 ## Licensing Note
 
-The files in this overlay repository are released under the repository `LICENSE`.
-
-Upstream OpenClaw remains separately licensed by its maintainers. If you redistribute upstream code, keep upstream notices and license terms intact.
+The files in this repository are released under the repository `LICENSE`.

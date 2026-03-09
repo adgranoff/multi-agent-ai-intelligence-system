@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Query engine for OpenClaw relationship graph."""
+"""Query engine for the knowledge base relationship graph."""
 
 import argparse
 import json
@@ -274,7 +274,7 @@ class GraphQuery:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="OpenClaw KB Graph Query Engine")
+    parser = argparse.ArgumentParser(description="Knowledge base graph query engine")
     parser.add_argument("--kb-path", default=str(default_kb_root()))
     sub = parser.add_subparsers(dest="command", required=True)
 

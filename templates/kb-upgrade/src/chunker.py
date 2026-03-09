@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Chunking utilities for OpenClaw KB."""
+"""Chunking utilities for the knowledge base."""
 
 from dataclasses import dataclass
 from pathlib import Path

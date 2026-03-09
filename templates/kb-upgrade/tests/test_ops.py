@@ -7,7 +7,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-import openclaw  # noqa: E402
+import kb_ops  # noqa: E402
 from common import ensure_kb_dirs  # noqa: E402
 from embedder import Embedder  # noqa: E402
 
@@ -22,7 +22,7 @@ def _cosine(a, b) -> float:
 
 
 def test_local_embedding_fallback_preserves_lexical_similarity(tmp_path: Path):
-    kb = tmp_path / "openclaw-kb"
+    kb = tmp_path / "intelligence-kb"
     ensure_kb_dirs(kb)
     emb = Embedder(kb)
 
@@ -34,16 +34,16 @@ def test_local_embedding_fallback_preserves_lexical_similarity(tmp_path: Path):
 
 
 def test_weekly_report_falls_back_when_llm_unreachable(monkeypatch, tmp_path: Path):
-    kb = tmp_path / "openclaw-kb"
+    kb = tmp_path / "intelligence-kb"
     ensure_kb_dirs(kb)
 
     def _raise(*args, **kwargs):
-        raise openclaw.requests.ConnectionError("dns failure")
+        raise kb_ops.requests.ConnectionError("dns failure")
 
-    monkeypatch.setattr(openclaw, "find_api_key", lambda: "fake-key")
-    monkeypatch.setattr(openclaw.requests, "post", _raise)
+    monkeypatch.setattr(kb_ops, "find_api_key", lambda: "fake-key")
+    monkeypatch.setattr(kb_ops.requests, "post", _raise)
 
-    out = openclaw._generate_weekly_memo(kb)
+    out = kb_ops._generate_weekly_memo(kb)
     text = out.read_text(encoding="utf-8")
 
     assert out.exists()

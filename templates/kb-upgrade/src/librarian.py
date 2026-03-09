@@ -144,7 +144,7 @@ class LibrarianRunner:
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
             "HTTP-Referer": "https://example.invalid",
-            "X-Title": "OpenClaw Librarian",
+            "X-Title": "Librarian",
         }
         try:
             resp = requests.post(
@@ -451,7 +451,7 @@ def _print_report(report: Dict[str, Any]) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Process Sentinel digests into OpenClaw KB")
+    parser = argparse.ArgumentParser(description="Process Sentinel digests into the knowledge base")
     parser.add_argument("digest", nargs="?", help="Optional specific digest file path")
     parser.add_argument("--kb-path", default=str(default_kb_root()))
     parser.add_argument("--model", choices=["fast", "quality"], default="fast")

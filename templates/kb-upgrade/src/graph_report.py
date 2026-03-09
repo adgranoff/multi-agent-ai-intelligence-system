@@ -57,7 +57,7 @@ class GraphReport:
 
     def generate(self) -> str:
         now = datetime.utcnow()
-        lines: List[str] = [f"# OpenClaw Graph Report - {now.date().isoformat()}", ""]
+        lines: List[str] = [f"# Knowledge Base Graph Report - {now.date().isoformat()}", ""]
 
         lines.extend([
             "## Graph Overview",
