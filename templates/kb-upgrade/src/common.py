@@ -11,7 +11,7 @@ from typing import Any, Dict, List, Tuple
 import yaml
 
 
-DEFAULT_PROVIDER_API_BASE_URL = "https://openrouter.ai/api/v1"
+DEFAULT_PROVIDER_API_BASE_URL = "https://api.example.com/v1"
 
 
 def default_kb_root() -> Path:
