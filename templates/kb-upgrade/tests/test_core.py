@@ -6,7 +6,14 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from chunker import Chunker
-from common import dump_frontmatter, ensure_kb_dirs, parse_frontmatter, provider_api_base_url, provider_api_url
+from common import (
+    DEFAULT_PROVIDER_API_BASE_URL,
+    dump_frontmatter,
+    ensure_kb_dirs,
+    parse_frontmatter,
+    provider_api_base_url,
+    provider_api_url,
+)
 from build_index import IndexBuilder
 from decay import ConfidenceDecay
 from graph_builder import GraphBuilder
@@ -136,8 +143,8 @@ def test_confidence_decay_report_and_apply(tmp_path: Path):
 def test_provider_api_url_defaults_to_generic_base(monkeypatch):
     monkeypatch.delenv("MODEL_PROVIDER_API_BASE_URL", raising=False)
 
-    assert provider_api_base_url() == "https://openrouter.ai/api/v1"
-    assert provider_api_url("chat/completions") == "https://openrouter.ai/api/v1/chat/completions"
+    assert provider_api_base_url() == DEFAULT_PROVIDER_API_BASE_URL
+    assert provider_api_url("chat/completions") == f"{DEFAULT_PROVIDER_API_BASE_URL}/chat/completions"
 
 
 def test_provider_api_url_honors_override(monkeypatch):
