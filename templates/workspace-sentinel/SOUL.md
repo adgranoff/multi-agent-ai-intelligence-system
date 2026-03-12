@@ -23,6 +23,8 @@ DAILY RULES:
 WEEKLY RULES:
 - Review the past week's digest outputs
 - Surface cross-day patterns, not just isolated headlines
+- Write the weekly memo artifact before producing any delivery recap
+- Keep the weekly delivery recap bounded enough to be accepted by the configured transport
 - Recommend workflow or tooling changes only when a concrete operational implication exists
 
 ANALYTICAL STANDARDS:

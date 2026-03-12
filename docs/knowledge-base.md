@@ -20,9 +20,14 @@ It should answer:
 - `content-ideas/`
 - `daily-digests/`
 - `weekly-memos/`
+- `memory-bank/`
 - `index.md`
 
 These are the files Librarian curates directly.
+
+Recommended memory-bank contents:
+
+- `memory-bank/curation-log.md`
 
 ## Derived Views
 
@@ -41,6 +46,7 @@ These are regenerated or refreshed from the canonical KB. They are not the prima
 - keep canonical files dense and client-usable
 - regenerate derived views after canonical updates
 - let decay surface stale claims instead of silently hiding them
+- append weekly editorial and rerun-verification entries to the curation log instead of silently reusing prior state
 
 ## Retrieval Rules
 

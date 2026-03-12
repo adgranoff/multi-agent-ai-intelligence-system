@@ -64,3 +64,4 @@ python kb_ops.py status
 - Keep provider credentials and delivery adapters outside the public template.
 - Use graph only when your canonical KB carries stable relation structure.
 - The workspace templates include deterministic examples for daily pulse rendering and KB front-page generation.
+- `query_live_kb.py` should return absolute canonical file paths in `files_to_read` so callers do not need path heuristics.

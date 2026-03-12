@@ -1,12 +1,14 @@
 # Multi-Agent AI Intelligence System
 
-This repository is a sanitized reference implementation for a narrow workflow:
+This repository is a sanitized implementation kit for a narrow workflow:
 
 ```text
 Collector -> Sentinel -> Librarian -> Knowledge Base Runtime -> Operator Assistant
+                       \
+                        -> Editor Weekly -> Knowledge Base Runtime
 ```
 
-It is not a general-purpose agent starter kit. It is a production-shaped pattern for turning recurring market signals into durable, queryable memory.
+It is intended to be studied, adapted, and rebuilt inside another environment by a coding workflow or engineering team. It is not a turnkey platform. It is a production-shaped pattern for turning recurring market signals into durable, queryable memory.
 
 ## What This System Does
 
@@ -19,6 +21,20 @@ This system turns raw AI market signals into:
 - on-demand KB answers through an operator-facing assistant
 
 The result is a workflow that pushes high-signal updates on a schedule while still supporting interactive queries later.
+
+## How To Use This Repository
+
+Use this repository as:
+
+- an architecture reference for the end-to-end workflow
+- a template pack for the main workspaces and runtime layer
+- an implementation brief for an AI coding workflow that will rebuild the system in a different environment
+
+Do not use it as:
+
+- a drop-in production deployment
+- a bundle of live credentials, delivery targets, or private data
+- a promise that every implementation should use the exact same scheduler, transport, or model provider
 
 ## End-to-End Daily Flow
 
@@ -73,12 +89,12 @@ Operator
 Operator Assistant
   detects AI / market / company / strategy / opportunity questions
   runs a live KB query:
-  python3 kb-runtime/query_live_kb.py "<question>" --json
+  python3 templates/kb-upgrade/query_live_kb.py "<question>" --json
    |
    v
 Semantic KB Runtime
   searches the live vector index
-  returns top matches + files_to_read
+  returns top matches + absolute files_to_read
    |
    v
 Operator Assistant
@@ -94,6 +110,14 @@ Sentinel Weekly
   reads recent daily digests + KB context
   writes a weekly memo artifact
   sends a weekly market recap through the configured delivery channel
+
+Sunday 2:30 PM
+Editor Weekly
+  reads the weekly memo + live KB
+  performs high-order curation or an idempotent rerun verification
+  appends a curation-log entry
+  refreshes deterministic KB views
+  refreshes KB runtime state so retrieval matches the curated KB
 ```
 
 ## Why The Timing Matters
@@ -130,6 +154,7 @@ It should:
 - write a dated weekly memo
 - publish latest pointers for downstream consumers
 - render concise delivery-safe summaries after artifacts exist
+- treat a delivery-facing run as successful only when the summary is usable and accepted by the configured delivery path
 
 ### 3. Librarian
 
@@ -144,7 +169,19 @@ It should:
 
 Librarian should update existing files before creating new ones.
 
-### 4. Knowledge Base Runtime
+### 4. Editor Weekly
+
+Editor is the weekly high-order curation layer.
+
+It should:
+
+- read the latest weekly memo plus relevant canonical KB files
+- merge duplicates, tighten summaries, and promote durable patterns
+- append a weekly curation-log entry
+- support idempotent same-day reruns that verify state instead of re-curating from scratch
+- refresh the same derived views and retrieval state the operator depends on
+
+### 5. Knowledge Base Runtime
 
 The KB runtime is the retrieval and maintenance plane behind Librarian.
 
@@ -157,7 +194,7 @@ It should:
 
 This runtime should operate on the same knowledge base that Librarian curates. The clean end state is one canonical KB, not two competing stores.
 
-### 5. Operator Assistant
+### 6. Operator Assistant
 
 The operator assistant sits on top of the KB.
 
@@ -178,8 +215,9 @@ This keeps the scheduled intelligence workflow and the interactive query workflo
 - daily Librarian KB maintenance
 - deterministic dashboard and outreach generation
 - vector-backed semantic retrieval
-- query helper for an operator assistant
+- query helper for an operator assistant with exact-entity boosts and absolute file-path follow-ups
 - confidence decay over live KB content
+- weekly editorial curation and rerun verification
 - optional graph and hybrid retrieval when relations are mature enough to justify them
 - failure-alert friendly workflow boundaries
 
@@ -210,6 +248,7 @@ docs/
   cron-and-delivery.md
   getting-started.md
   knowledge-base.md
+  weekly-editor-runbook.md
 examples/
   .env.example
   schedule.md
@@ -225,6 +264,7 @@ templates/
   knowledge-base/
   shared/
   workspace-collector/
+  workspace-editor/
   workspace-sentinel/
   workspace-librarian/
   workspace-modelscout/
@@ -234,6 +274,7 @@ templates/
 ## What Is Included
 
 - sanitized Collector, Sentinel, Librarian, and model-landscape templates
+- sanitized weekly Editor templates and rerun pattern
 - knowledge-base templates and example files
 - advanced KB runtime code for indexing, search, decay, and maintenance
 - deterministic reference scripts for market-pulse rendering and KB index generation
@@ -255,7 +296,8 @@ templates/
 2. [docs/knowledge-base.md](docs/knowledge-base.md)
 3. [docs/advanced-kb.md](docs/advanced-kb.md)
 4. [docs/cron-and-delivery.md](docs/cron-and-delivery.md)
-5. [docs/getting-started.md](docs/getting-started.md)
+5. [docs/weekly-editor-runbook.md](docs/weekly-editor-runbook.md)
+6. [docs/getting-started.md](docs/getting-started.md)
 
 ## Before You Publish Your Own Version
 

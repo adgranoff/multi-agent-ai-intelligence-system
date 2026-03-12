@@ -51,6 +51,8 @@ Its job is to:
 - collapse noisy duplicate chunks
 - return the best matches
 - suggest which canonical files the assistant should read next
+- return absolute canonical file paths so the caller does not have to guess path resolution
+- boost exact entity hits so company-specific questions surface the canonical entity file before broader thematic matches
 
 Relevant file:
 

@@ -7,6 +7,7 @@ This is an example operating cadence for the AI intelligence workflow.
 - `1:00 PM daily` — Librarian daily KB curation
 - `1:30 PM daily` — KB runtime refresh
 - `2:00 PM Sunday` — Sentinel weekly memo
+- `2:30 PM Sunday` — Editor weekly curation or rerun verification
 
 The exact times are less important than the ordering:
 
@@ -14,5 +15,11 @@ The exact times are less important than the ordering:
 2. Sentinel second
 3. Librarian third
 4. KB runtime fourth
+
+For the weekly path:
+
+1. Sentinel weekly first
+2. Editor weekly second
+3. KB/runtime refresh only after editorial work
 
 Never schedule downstream agents before upstream artifacts exist.

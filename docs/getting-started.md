@@ -2,11 +2,18 @@
 
 This repository is a workflow template pack, not a complete platform.
 
+Treat it as an implementation kit:
+
+- a human engineer can adapt it directly
+- an AI coding workflow can use it as a build brief plus template source
+- the final production shape should be fitted to your scheduler, delivery channel, storage layout, and risk posture
+
 Use it if you want:
 
 - a Collector that gathers source artifacts
 - a Sentinel that turns them into daily and weekly intelligence
 - a Librarian that curates a durable KB
+- an Editor that performs weekly high-order curation
 - a KB runtime that adds semantic retrieval and decay
 - an operator-facing assistant that can query that KB
 
@@ -25,6 +32,7 @@ project-root/
   workspace-collector/
   workspace-sentinel/
   workspace-librarian/
+  workspace-editor/
   workspace-modelscout/
   shared/
   knowledge-base/
@@ -41,6 +49,7 @@ Use relative paths inside your own project rather than hard-coding machine-speci
 4. Run one end-to-end dry run before wiring a scheduler or delivery adapter.
 5. Add the KB runtime after the core pipeline is stable.
 6. Add the operator-assistant query path last.
+7. Add the weekly Editor path once the daily pipeline is reliable.
 
 ## Example Bootstrap
 
@@ -49,6 +58,7 @@ mkdir -p project-root
 cp -R templates/workspace-collector project-root/
 cp -R templates/workspace-sentinel project-root/
 cp -R templates/workspace-librarian project-root/
+cp -R templates/workspace-editor project-root/
 cp -R templates/workspace-modelscout project-root/
 cp -R templates/knowledge-base project-root/knowledge-base
 cp -R templates/shared project-root/shared-templates
@@ -57,6 +67,13 @@ cp -R skills project-root/
 ```
 
 Then adapt the copied files to your environment.
+
+Good adaptation pattern:
+
+1. keep the workflow ordering
+2. rename paths and transports to fit your environment
+3. preserve artifact-first and latest-pointer contracts
+4. preserve idempotent weekly rerun behavior
 
 ## Configure Environment
 
@@ -100,6 +117,12 @@ cd kb-runtime
 python3 query_live_kb.py "What changed this week?"
 ```
 
+Weekly editor refresh wrapper:
+
+```bash
+bash workspace-editor/run-weekly-refresh.sh
+```
+
 ## What You Must Customize
 
 - source fetchers
@@ -127,3 +150,8 @@ You should consider the system minimally working only when:
 4. Librarian updates canonical KB files and derived views
 5. the KB runtime refreshes semantic retrieval state
 6. the operator assistant can answer one KB query from the live system
+
+For the weekly path, add:
+
+7. Sentinel writes a weekly memo and bounded delivery recap
+8. Editor writes or verifies the weekly editorial state and refreshes runtime cleanly

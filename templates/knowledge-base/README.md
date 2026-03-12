@@ -11,6 +11,7 @@ Recommended structure:
 - `content-ideas/`
 - `daily-digests/`
 - `weekly-memos/`
+- `memory-bank/`
 - `outreach-queue.md`
 - `decision-dashboard.md`
 - `indexes/vector-store/`
@@ -18,3 +19,7 @@ Recommended structure:
 
 The KB should store durable, reusable strategic memory rather than raw source dumps.
 Canonical files are the source of truth. Runtime indexes and decay state are derived artifacts.
+
+Recommended weekly memory file:
+
+- `memory-bank/curation-log.md`

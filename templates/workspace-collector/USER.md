@@ -6,6 +6,3 @@
 - **Business context:**
 - **Working preferences:**
 - **Notes:**
-
-Keep this useful and privacy-respecting. Do not store secrets here.
-

@@ -6,6 +6,3 @@
 - **Knowledge needs:**
 - **Editorial preferences:**
 - **Notes:**
-
-Keep this useful and privacy-respecting. Do not store secrets here.
-

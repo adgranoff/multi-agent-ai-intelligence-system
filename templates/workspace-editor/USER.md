@@ -3,6 +3,6 @@
 - **Name:**
 - **Preferred address:**
 - **Timezone:**
-- **Cost sensitivity:**
-- **Risk tolerance for model changes:**
+- **Editorial priorities:**
+- **Curation preferences:**
 - **Notes:**

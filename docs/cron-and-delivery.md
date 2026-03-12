@@ -14,12 +14,19 @@ Do not treat a run as successful when:
 
 ## Wrapper Pattern
 
-Every delivery-facing deterministic job should follow this order:
+Every delivery-facing or delivery-summarized job should follow this order:
 
 1. run the real script
 2. validate the expected artifact
 3. render a short plain-text summary
 4. print exactly that summary
+
+For synthesis jobs, the same principle still applies even when the artifact is model-written:
+
+1. write the artifact first
+2. validate the artifact path and size
+3. render a bounded delivery summary
+4. treat delivery acceptance as part of success
 
 ## Buffering Rule
 
@@ -46,6 +53,19 @@ maintenance-only retrieval refresh second
 
 That avoids a long-running maintenance task breaking a user-visible delivery step.
 
+## Weekly Editorial Rerun Rule
+
+If a weekly editorial job is rerun on the same date, it should be idempotent.
+
+Good pattern:
+
+1. verify the existing editorial memo
+2. append a fresh rerun-verification entry to the curation log
+3. refresh derived views and retrieval state
+4. return a concise verification summary
+
+Do not create a second editorial memo for the same date.
+
 ## Debugging Order
 
 1. inspect the run record
@@ -58,3 +78,9 @@ That avoids a long-running maintenance task breaking a user-visible delivery ste
 ## Cost Rule
 
 Do not spend expensive model tokens on jobs that only need to execute a script and print a deterministic summary.
+
+## Model Pinning Rule
+
+For delivery-critical synthesis jobs, do not inherit a moving default model without verification.
+
+If tool compliance and bounded output matter, pin a model/provider combination that has already proved reliable for that job contract.
