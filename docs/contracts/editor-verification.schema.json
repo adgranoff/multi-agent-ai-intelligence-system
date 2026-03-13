@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "editor-verification.schema.json",
+  "title": "Editor Rerun Verification",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "date",
+    "mode",
+    "memoPath",
+    "actionsPath",
+    "logPath",
+    "derivedRefreshComplete",
+    "runtimeRefreshComplete",
+    "status"
+  ],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1
+    },
+    "date": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "mode": {
+      "type": "string",
+      "const": "rerun-verification"
+    },
+    "memoPath": {
+      "type": "string",
+      "minLength": 1
+    },
+    "actionsPath": {
+      "type": "string",
+      "minLength": 1
+    },
+    "logPath": {
+      "type": "string",
+      "minLength": 1
+    },
+    "derivedRefreshComplete": {
+      "type": "boolean"
+    },
+    "runtimeRefreshComplete": {
+      "type": "boolean"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ok",
+        "failed"
+      ]
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}

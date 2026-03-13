@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "collector-manifest.schema.json",
+  "title": "Collector Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "generatedAt",
+    "sourceDate",
+    "overallStatus",
+    "sources"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "const": 1
+    },
+    "generatedAt": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T"
+    },
+    "sourceDate": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "overallStatus": {
+      "type": "string",
+      "enum": [
+        "ok",
+        "degraded"
+      ]
+    },
+    "sources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ainews",
+        "xdigest",
+        "youtube"
+      ],
+      "properties": {
+        "ainews": {
+          "$ref": "#/$defs/source"
+        },
+        "xdigest": {
+          "$ref": "#/$defs/source"
+        },
+        "youtube": {
+          "$ref": "#/$defs/source"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "source": {
+      "type": "object",
+      "required": [
+        "status",
+        "valid",
+        "itemCount",
+        "path",
+        "summary"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "fresh",
+            "quiet",
+            "failed",
+            "invalid",
+            "missing"
+          ]
+        },
+        "valid": {
+          "type": "boolean"
+        },
+        "itemCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string"
+        },
+        "sizeBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "modifiedAt": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

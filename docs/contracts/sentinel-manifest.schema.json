@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sentinel-manifest.schema.json",
+  "title": "Sentinel Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "sourceDate",
+    "generatedAt",
+    "digestPath",
+    "latestDigestPath",
+    "sourceFreshness"
+  ],
+  "properties": {
+    "sourceDate": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "generatedAt": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T"
+    },
+    "digestPath": {
+      "type": "string",
+      "minLength": 1
+    },
+    "latestDigestPath": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sourceFreshness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ainews",
+        "xdigest",
+        "youtube"
+      ],
+      "properties": {
+        "ainews": {
+          "$ref": "#/$defs/freshness"
+        },
+        "xdigest": {
+          "$ref": "#/$defs/freshness"
+        },
+        "youtube": {
+          "$ref": "#/$defs/freshness"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "freshness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "itemCount",
+        "summary"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "fresh",
+            "quiet",
+            "failed",
+            "invalid",
+            "missing"
+          ]
+        },
+        "itemCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "summary": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

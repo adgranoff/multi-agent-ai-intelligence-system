@@ -1,0 +1,189 @@
+# Confidence Decay Rules
+# Defines how entity confidence degrades over time without confirmation
+
+rules_version: "1.0.0"
+
+# ============================================
+# DEFAULT RULE (applies to all entities)
+# ============================================
+default:
+  name: "Standard Decay"
+  description: "Default decay for most entity types"
+  
+  # Time-based decay (multiplicative)
+  daily_decay_rate: 0.95        # 5% decay per day
+  
+  # Grace period (no decay for new entities)
+  grace_period_days: 7
+  
+  # Floor
+  minimum_confidence: 0.1
+  
+  # Revival (confidence boost when confirmed)
+  confirmation_boost: 0.1
+  confirmation_cap: 0.95
+
+# ============================================
+# ENTITY-SPECIFIC OVERRIDES
+# ============================================
+by_entity_type:
+
+  opportunity:
+    name: "Fast Decay"
+    description: "Opportunities become stale quickly"
+    daily_decay_rate: 0.90        # 10% decay per day
+    grace_period_days: 3
+    minimum_confidence: 0.1
+    confirmation_boost: 0.15      # Higher boost when re-confirmed
+
+  theme:
+    name: "Slow Decay"
+    description: "Themes are long-term trends"
+    daily_decay_rate: 0.97        # 3% decay per day
+    grace_period_days: 14
+    minimum_confidence: 0.2
+    confirmation_boost: 0.08
+
+  lab:
+    name: "Moderate Decay"
+    description: "Lab status changes slowly but important news arrives often"
+    daily_decay_rate: 0.96
+    grace_period_days: 10
+    minimum_confidence: 0.15
+    confirmation_boost: 0.1
+
+  model:
+    name: "Technology Decay"
+    description: "Models become outdated as new ones release"
+    daily_decay_rate: 0.93        # 7% decay per day
+    grace_period_days: 5
+    minimum_confidence: 0.1
+    # Extra decay when newer model in same family detected
+    new_version_decay_bonus: 0.5  # Halve confidence immediately
+
+  person:
+    name: "Career Decay"
+    description: "Career info becomes stale but moves slower than models"
+    daily_decay_rate: 0.94
+    grace_period_days: 10
+    minimum_confidence: 0.15
+    # Boost on job change
+    role_change_boost: 0.2
+
+  company:
+    name: "Business Decay"
+    description: "Company fundamentals change slowly"
+    daily_decay_rate: 0.96
+    grace_period_days: 10
+    minimum_confidence: 0.15
+
+  investor:
+    name: "Capital Decay"
+    description: "Investment positions change with market"
+    daily_decay_rate: 0.95
+    grace_period_days: 14
+    minimum_confidence: 0.1
+    confirmation_boost: 0.12      # Funding events are major
+
+  regulator:
+    name: "Policy Decay"
+    description: "Government positions stable but actions matter"
+    daily_decay_rate: 0.97
+    grace_period_days: 14
+    minimum_confidence: 0.2
+    # Major policy events trigger boost
+    significant_action_boost: 0.15
+
+# ============================================
+# SIGNAL-SPECIFIC RULES
+# ============================================
+by_signal_type:
+
+  funding_round:
+    name: "Funding Decay"
+    description: "Funding events remain relevant longer"
+    decay_rate_modifier: 1.05     # 5% slower decay
+    value_retention_years: 2       # Keep high confidence for 2 years
+
+  model_release:
+    name: "Release Decay"
+    description: "Model releases become outdated by new versions"
+    decay_rate_modifier: 0.90     # 10% faster decay
+    auto_archive_if_superseded: true
+
+  benchmark_result:
+    name: "Benchmark Decay"
+    description: "Benchmarks matter until beaten"
+    decay_rate_modifier: 0.95     # 5% faster decay
+
+  talent_move:
+    name: "Personnel Decay"
+    description: "Job changes matter less after 90 days"
+    decay_rate_modifier: 0.92     # 8% faster decay
+
+# ============================================
+# STATUS OVERRIDES
+# ============================================
+by_status:
+  
+  dormant:
+    name: "Dormant Decay"
+    description: "Dormant entities decay faster"
+    decay_rate_modifier: 0.90     # 10% faster
+    minimum_confidence: 0.05
+
+  archived:
+    name: "Archived Freeze"
+    description: "Archived entities don't decay, they're historical"
+    enabled: false
+
+# ============================================
+# SPECIAL CONDITIONS
+# ============================================
+special_conditions:
+  
+  # When entity mentioned in multiple consecutive digests
+  multi_source_confirmation:
+    name: "Multi-Source Boost"
+    description: "Confirmed by multiple sources in quick succession"
+    threshold_days: 7
+    source_count: 3
+    confidence_floor: 0.85    # Can't decay below this
+    decay_rate_modifier: 1.20   # 20% slower decay
+
+  # When entity is actively trending
+  trending_boost:
+    name: "Trending Pin"
+    description: "Temporarily pin confidence during trend"
+    detection: "signal_velocity > 3_per_day"
+    duration_days: 7
+    confidence_min: 0.80
+    pause_decay: true
+
+  # When contradicted
+  contradiction_penalty:
+    name: "Contradiction Hit"
+    description: "Confidence drops when signals contradict"
+    penalty: -0.25              # Immediate penalty
+    floor: 0.1                  # But don't go below this
+
+# ============================================
+# CALCULATION FORMULA
+# ============================================
+# New confidence = max(
+#   min_confimum,
+#   max(
+#     old_confidence * daily_decay_rate ^ days_since_confirmation,
+#     floor_from_rules
+#   )
+# )
+#
+# If confirmed: confidence = min(confidence + confirmation_boost, confirmation_cap)
+#
+# If dormant/archived: apply status modifiers first
+#
+# If multi_source_confirmation: floor = 0.85, decay slower
+#
+# If trending_boost: if within 7 days of velocity spike, enforce min 0.80
+#
+# If contradicted: immediate -0.25 penalty, then normal decay
